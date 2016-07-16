@@ -1,0 +1,1594 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RAMvader</name>
+    </assembly>
+    <members>
+        <member name="T:RAMvader.CodeInjection.CodeCaveDefinitionAttribute">
+            <summary>
+               This attribute is required to be applied to all of the enumerator values that identify a Code Cave which needs
+               to be injected by the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class.
+               Failing to apply that attribute to a code cave causes an error during the call
+               to <see cref="M:RAMvader.CodeInjection.Injector`3.Inject"/>.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.CodeCaveDefinitionAttribute.m_codeCaveDefinition">
+            <summary>Keeps the code cave definition which is initialized into this class' constructor method.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.CodeCaveDefinitionAttribute.GetCodeCaveDefinitionAttributeFromEnum(System.Enum)">
+            <summary>Utility method which retrieves the <see cref="T:RAMvader.CodeInjection.CodeCaveDefinitionAttribute"/> from the given enumerator value.</summary>
+            <param name="elm">The enumerator from which the <see cref="T:RAMvader.CodeInjection.CodeCaveDefinitionAttribute"/> should be retrieved.</param>
+            <returns>
+               Returns the <see cref="T:RAMvader.CodeInjection.CodeCaveDefinitionAttribute"/> associated with the given enumerator, if any.
+               Returns null if no <see cref="T:RAMvader.CodeInjection.CodeCaveDefinitionAttribute"/> is associated with the given enumerator.
+            </returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.CodeCaveDefinitionAttribute.#ctor(System.Object[])">
+            <summary>Constructor.</summary>
+            <param name="codeCaveDefinition">
+               An array of objects representing the parts which constitute the code cave.
+               Acceptable values are byte values (this method accepts int values from 0 to 255 and converts them to the byte type internally)
+               and Injection Variable enumerator values. When an Injection Variable enumerator value is found, it is replaced by the address of
+               the corresponding injected variable.
+            </param>
+        </member>
+        <member name="M:RAMvader.CodeInjection.CodeCaveDefinitionAttribute.PerformSafetyChecks``1">
+            <summary>Checks the definitions for the code caves, throwing an exception when there's anything wrong with the definition.</summary>
+            <typeparam name="TVariable">
+               An enumerated type which specifies the identifiers for variables to be injected at the target process.
+               Each enumerator belonging to this enumeration should have the <see cref="T:RAMvader.CodeInjection.VariableDefinitionAttribute"/> attribute.
+            </typeparam>
+            <exception cref="T:RAMvader.CodeInjection.InjectorException">
+               Thrown when any errors are found in the definition of a given code cave.
+               The exception's message explain the errors that must be fixed.
+            </exception>
+        </member>
+        <member name="M:RAMvader.CodeInjection.CodeCaveDefinitionAttribute.GetCodeCaveBytes``3(RAMvader.CodeInjection.Injector{``0,``1,``2})">
+            <summary>
+               Retrives a sequence of bytes representing the code cave that this attribute is associated to.
+               This method preserves the byte values passed to the <see cref="T:RAMvader.CodeInjection.CodeCaveDefinitionAttribute"/> constructor and replaces any Injection Variable enumerator value
+               passed to this constructor by the injected variable's address. NOTICE: This method should only be called after the <see cref="T:RAMvader.CodeInjection.Injector`3"/>
+               class has calculated the addresses for injected variables.
+            </summary>
+            <typeparam name="TMemoryAlterationID">The enumeration of Memory Alteration Sets used for the <see cref="T:RAMvader.CodeInjection.Injector`3"/>.</typeparam>
+            <typeparam name="TCodeCave">The enumeration of Code Caves used for the <see cref="T:RAMvader.CodeInjection.Injector`3"/>.</typeparam>
+            <typeparam name="TVariable">The enumeration of Injection Variables used for the <see cref="T:RAMvader.CodeInjection.Injector`3"/>.</typeparam>
+            <param name="injector">The <see cref="T:RAMvader.CodeInjection.Injector`3"/> object used to retrieve the bytes of the code cave.</param>
+            <returns>Returns a byte sequence representing the code cave, ready to be injected into the game's memory.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.CodeCaveDefinitionAttribute.GetCodeCaveSize``3(RAMvader.CodeInjection.Injector{``0,``1,``2})">
+            <summary>Calculates and retrieves the size of the code cave.</summary>
+            <typeparam name="TMemoryAlterationID">The enumeration of Memory Alteration Sets used for the <see cref="T:RAMvader.CodeInjection.Injector`3"/>.</typeparam>
+            <typeparam name="TCodeCave">The enumeration of Code Caves used for the <see cref="T:RAMvader.CodeInjection.Injector`3"/>.</typeparam>
+            <typeparam name="TVariable">The enumeration of Injection Variables used for the <see cref="T:RAMvader.CodeInjection.Injector`3"/>.</typeparam>
+            <param name="injector">Reference to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> object, used to calculate some size properties (e.g., variable sizes).</param>
+            <returns>Returns the number of bytes of size for the code cave.</returns>
+        </member>
+        <member name="T:RAMvader.CodeInjection.InjectionFailureException">
+            <summary>An exception thrown by the <see cref="T:RAMvader.CodeInjection.Injector`3"/> to indicate the injection method has failed.</summary>
+        </member>
+        <member name="T:RAMvader.CodeInjection.InjectionFailureException.EFailureType">
+            <summary>Indicates the type of failure which caused the exception.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.InjectionFailureException.EFailureType.evFailureRAMvaderTargetNull">
+            <summary>
+               Indicates that the <see cref="T:RAMvader.CodeInjection.Injector`3"/> has not been initialized with a
+               <see cref="T:RAMvader.RAMvaderTarget"/> object. This can be done by calling <see cref="M:RAMvader.CodeInjection.Injector`3.SetTargetProcess(RAMvader.RAMvaderTarget)"/>.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.InjectionFailureException.EFailureType.evFailureNotAttached">
+            <summary>
+               Indicates that the <see cref="T:RAMvader.RAMvaderTarget"/> object associated to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> is currently not
+               attached to any process.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.InjectionFailureException.EFailureType.evFailureMemoryAllocation">
+            <summary>
+               Indicates that the <see cref="T:RAMvader.CodeInjection.Injector`3"/> has tried to allocate virtual memory in the target process'
+               memory space, but the allocation failed. This usually happens either when the system denies the allocation
+               or if there are no code caves and injection variables to be injected - which effectivelly means that there's
+               actually NOTHING to be injected into the target process' memory space, making the injection completely unnecessary.
+               Memory allocation happens when you call the <see cref="M:RAMvader.CodeInjection.Injector`3.Inject"/> method (the parameterless version of it).
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.InjectionFailureException.EFailureType.evFailureWriteToTarget">
+            <summary>Indicates that the call to <see cref="M:RAMvader.RAMvaderTarget.WriteToTarget(System.IntPtr,System.Byte[])"/> method has failed.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.InjectionFailureException.m_failureType">
+            <summary>Keeps the type of failure that caused the exception to be thrown.</summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.InjectionFailureException.FailureType">
+            <summary>The type of failure that caused the exception to be thrown.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.InjectionFailureException.#ctor(RAMvader.CodeInjection.InjectionFailureException.EFailureType)">
+            <summary>Constructor.</summary>
+            <param name="failureType">The type of failure which caused the exception to be thrown.</param>
+        </member>
+        <member name="T:RAMvader.CodeInjection.Injector`3">
+            <summary>
+               Implements the logic behind the injection of code caves and variables into a target process' memory space.
+            </summary>
+            <typeparam name="TMemoryAlterationSetID">
+               An enumerated type which specifies the identifiers for Memory Alteration Sets
+               that can be enabled or disabled into the target process' memory space.
+            </typeparam>
+            <typeparam name="TCodeCave">
+               An enumerated type which specifies the identifiers for code caves. Each enumerator belonging to this enumeration
+               should have the <see cref="T:RAMvader.CodeInjection.CodeCaveDefinitionAttribute"/> attribute.
+            </typeparam>
+            <typeparam name="TVariable">
+               An enumerated type which specifies the identifiers for variables to be injected at the target process.
+               Each enumerator belonging to this enumeration should have the <see cref="T:RAMvader.CodeInjection.VariableDefinitionAttribute"/> attribute.
+            </typeparam>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.SUPPORTED_VARIABLE_TYPES_SIZE">
+            <summary>
+               Keeps both the supported types of variables that can be injected into the
+               target process' memory space and their corresponding sizes, given in number
+               of bytes.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_targetProcess">
+            <summary>
+               The object used to attach to the target process, so that the <see cref="T:RAMvader.CodeInjection.Injector`3"/> can
+               perform I/O operations into the target process' memory.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_baseInjectionAddress">
+            <summary>Keeps the base address of the memory which was allocated for the target process.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_isInjected">
+            <summary>Backs the <see cref="P:RAMvader.CodeInjection.Injector`3.IsInjected"/> property.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_bHasAllocatedMemory">
+            <summary>
+               A flag specifying if the <see cref="T:RAMvader.CodeInjection.Injector`3"/> has allocated memory in the target process for
+               injecting its data. When the <see cref="T:RAMvader.CodeInjection.Injector`3"/> allocates memory in the target process, it is
+               responsible for freing it whenever necessary.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_codeCavesSeparator">
+            <summary>The sequence of bytes which separate two consecutive code caves.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_variablesSectionSeparator">
+            <summary>The sequence of bytes which separate the code caves region from the variables region.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_memoryAlterationSets">
+            <summary>Keeps all the alterations registered for a given memory alteration set.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_codeCaveOffset">
+            <summary>
+               Indexer field used to access the code cave offsets, usually for WPF Binding purposes.
+               Calls <see cref="M:RAMvader.CodeInjection.Injector`3.GetCodeCaveOffset(`1)"/> internally.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_injectedCodeCaveAddress">
+            <summary>
+               Indexer property used to access the address where a code cave has been injected, usually
+               for WPF Binding purposes. Calls <see cref="M:RAMvader.CodeInjection.Injector`3.GetInjectedCodeCaveAddress(`1)"/> internally.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_variableOffset">
+            <summary>
+               Indexer property used to access variable offsets, usually for WPF Binding purposes.
+               Calls <see cref="M:RAMvader.CodeInjection.Injector`3.GetVariableOffset(`2)"/> internally.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_injectedVariableAddress">
+            <summary>
+               Indexer property used to access the address where a variable has been injected, usually
+               for WPF Binding purposes. Calls <see cref="M:RAMvader.CodeInjection.Injector`3.GetInjectedVariableAddress(`2)"/> internally.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.m_variableSize">
+            <summary>
+               Indexer property used to retrieve the size of a variable, usually for WPF Binding purposes.
+               Calls <see cref="M:RAMvader.CodeInjection.Injector`3.GetVariableSize(`2)"/> internally.
+            </summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.BaseInjectionAddress">
+            <summary>
+               Keeps the base address of the memory which was allocated for the target process.
+               Backed by the <see cref="F:RAMvader.CodeInjection.Injector`3.m_baseInjectionAddress"/> field.
+            </summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.IsInjected">
+            <summary>
+               A flag that is set to true whenever the <see cref="M:RAMvader.CodeInjection.Injector`3.Inject"/> (or <see cref="M:RAMvader.CodeInjection.Injector`3.Inject(System.IntPtr)"/>) method is called and succeeds, and set to false
+               whenever the<see cref="M:RAMvader.CodeInjection.Injector`3.ResetAllocatedMemoryData"/> gets called.
+            </summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.TargetProcess">
+            <summary>
+               The object used to attach to the target process, so that the <see cref="T:RAMvader.CodeInjection.Injector`3"/> can
+               perform I/O operations into the target process' memory.
+               Backed by the <see cref="F:RAMvader.CodeInjection.Injector`3.m_targetProcess"/> field.
+            </summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.RequiredBytesCount">
+            <summary>
+               The total number of required bytes to inject the code caves and variables into the target
+               process' memory space, as calculated by a call to the method <see cref="M:RAMvader.CodeInjection.Injector`3.CalculateRequiredBytesCount"/>.
+            </summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.CodeCaveOffset">
+            <summary>
+               Indexer property used to access the code cave offsets, usually for WPF Binding purposes.
+               Calls <see cref="M:RAMvader.CodeInjection.Injector`3.GetCodeCaveOffset(`1)"/> internally.
+               Backed by the <see cref="F:RAMvader.CodeInjection.Injector`3.m_codeCaveOffset"/> field.
+            </summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.InjectedCodeCaveAddress">
+            <summary>
+               Indexer property used to access the address where a code cave has been injected, usually
+               for WPF Binding purposes. Calls <see cref="M:RAMvader.CodeInjection.Injector`3.GetInjectedCodeCaveAddress(`1)"/> internally.
+               Backed by the <see cref="F:RAMvader.CodeInjection.Injector`3.m_injectedCodeCaveAddress"/> field.
+            </summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.VariableOffset">
+            <summary>
+               Indexer property used to access variable offsets, usually for WPF Binding purposes.
+               Calls <see cref="M:RAMvader.CodeInjection.Injector`3.GetVariableOffset(`2)"/> internally.
+               Backed by the <see cref="F:RAMvader.CodeInjection.Injector`3.m_variableOffset"/> field.
+            </summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.InjectedVariableAddress">
+            <summary>
+               Indexer property used to access the address where a variable has been injected, usually for WPF Binding purposes.
+               Calls <see cref="M:RAMvader.CodeInjection.Injector`3.GetInjectedVariableAddress(`2)"/> internally.
+               Backed by the <see cref="F:RAMvader.CodeInjection.Injector`3.m_injectedVariableAddress"/> field.
+            </summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.VariableSize">
+            <summary>
+               Indexer property used to retrieve the size of a variable, usually for WPF Binding purposes.
+               Calls <see cref="M:RAMvader.CodeInjection.Injector`3.GetVariableSize(`2)"/> internally.
+               Backed by the <see cref="F:RAMvader.CodeInjection.Injector`3.m_variableSize"/> field.
+            </summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetEnumAttributes``1(System.Object)">
+            <summary>Retrieves an array of attributes associated to the given enumerator.</summary>
+            <typeparam name="TAttrib">The type of the Attribute to be retrieved.</typeparam>
+            <param name="enumeratorValue">The value indicating the enumerator whose Attributes are to be retrieved.</param>
+            <returns>Returns an array of attributes of the TAttrib type for the given enumerator value.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetEnumAttribute``1(System.Object,System.Boolean)">
+            <summary>Retrieves an attribute associated to the given enumerator.</summary>
+            <typeparam name="TAttrib">The type of the Attribute to be retrieved.</typeparam>
+            <param name="enumeratorValue">The value indicating the enumerator whose Attribute is to be retrieved.</param>
+            <param name="bThrowException">
+               A flag indicating if an exception should be thrown when the attribute is not found.
+               If that flag is set to false, the method simply returns a null value when the attribute can't be retrieved.
+            </param>
+            <returns>Returns an array of attributes of the TAttrib type for the given enumerator value.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetInjectorNameWithTemplateParameters">
+            <summary>
+               Utility method for retrieving a human-readable name for the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class,
+               including the name of its generic parameters.
+            </summary>
+            <returns>Returns a string containing the name of the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class and its generic parameters.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetX86CallOpcode(System.IntPtr,System.IntPtr,System.Int32,RAMvader.EEndianness,RAMvader.EPointerSize,RAMvader.EDifferentPointerSizeError)">
+            <summary>
+               Utility method for retrieving a sequence of bytes which represent the machine-level opcode corresponding to a 32-bits CALL instruction.
+               64-bits CALL instructions are currently not supported by the RAMvader library.
+            </summary>
+            <param name="callInstructionAddress">The address of the CALL instruction itself.</param>
+            <param name="targetCallAddress">The address which should be called by the CALL instruction.</param>
+            <param name="instructionSize">
+               When replacing an instruction in a target process' memory space by a CALL instruction, this parameter specifies
+               the size of the instruction to be replaced. If this size is larger than the size of a CALL instruction, the
+               remaining bytes are filled with NOP opcodes in the returned bytes sequence, so that the CALL instruction might
+               replace other instructions while keeping the consistency of its surrounding instructions when a RET instruction is used
+               to return from the CALL.
+            </param>
+            <param name="endianness">The endianness to be used for the offset of the CALL opcode.</param>
+            <param name="pointerSize">The size of pointer to be used for the offset of the CALL opcode.</param>
+            <param name="diffPointerSizeError">
+               The policy for handling errors regarding different sizes of pointers between RAMvader process' pointers and the pointers
+               size defined by the "pointerSize" parameter.
+            </param>
+            <returns>Returns a sequence of bytes representing the CALL opcode that composes the given instruction.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetX86NearJumpOpcode(RAMvader.EJumpInstructionType,System.IntPtr,System.IntPtr,System.Int32,RAMvader.EPointerSize)">
+            <summary>
+               Utility method for retrieving a sequence of bytes which represent the machine-level opcode corresponding
+               to a 32-bits NEAR JUMP instruction. 64-bits JUMP instructions are currently not supported by the RAMvader library.
+            </summary>
+            <param name="jumpInstructionType">The specific type of jump instruction to be generated.</param>
+            <param name="jumpInstructionAddress">The address of the JUMP instruction itself.</param>
+            <param name="targetJumpAddress">The address to which the JUMP instruction should jump.</param>
+            <param name="instructionSize">
+               When replacing an instruction in a target process' memory space by a JUMP instruction, this parameter specifies the
+               size of the instruction to be replaced. If this size is larger than the size of a JUMP instruction, the remaining bytes
+               are filled with NOP opcodes in the returned bytes sequence, so that the JUMP instruction might replace other instructions
+               while keeping the consistency of its surrounding instructions when the flow of code returns from the jump (if that ever
+               happens).
+            </param>
+            <param name="pointerSize">The size of pointer to be used for the offset of the JUMP opcode.</param>
+            <returns>Returns a sequence of bytes representing the JUMP opcode that composes the given instruction.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetX86FarJumpOpcode(RAMvader.EJumpInstructionType,System.IntPtr,System.IntPtr,System.Int32,RAMvader.EEndianness,RAMvader.EPointerSize,RAMvader.EDifferentPointerSizeError)">
+            <summary>
+               Utility method for retrieving a sequence of bytes which represent the machine-level opcode
+               corresponding to a x86 FAR JUMP instruction. 64-bits JUMP instructions are currently not supported
+               by the RAMvader library.
+            </summary>
+            <param name="jumpInstructionType">The specific type of jump instruction to be generated.</param>
+            <param name="jumpInstructionAddress">The address of the JUMP instruction itself.</param>
+            <param name="targetJumpAddress">The address to which the JUMP instruction should jump.</param>
+            <param name="instructionSize">
+               When replacing an instruction in a target process' memory space by a JUMP instruction, this parameter specifies
+               the size of the instruction to be replaced. If this size is larger than the size of a JUMP instruction, the
+               remaining bytes are filled with NOP opcodes in the returned bytes sequence, so that the JUMP instruction might
+               replace other instructions while keeping the consistency of its surrounding instructions when the flow of code
+               returns from the jump (if that ever happens).
+            </param>
+            <param name="endianness">The endianness to be used for the offset of the JUMP opcode.</param>
+            <param name="pointerSize">The size of pointer to be used for the offset of the JUMP opcode.</param>
+            <param name="diffPointerSizeError">
+               The policy for handling errors regarding different sizes of pointers between RAMvader process' pointers and the
+               pointers size defined by the "pointerSize" parameter.
+            </param>
+            <returns>Returns a sequence of bytes representing the JUMP opcode that composes the given instruction.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.#ctor">
+            <summary>
+               Constructor. The constructor of the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class checks the code caves and
+               variables for consistency, throwing an exception if there is any error found.
+            </summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.SetTargetProcess(RAMvader.RAMvaderTarget)">
+            <summary>
+               Initializes or modifies the reference to the object used by the <see cref="T:RAMvader.CodeInjection.Injector`3"/>
+               to perform write operations to the target process' memory. The <see cref="T:RAMvader.CodeInjection.Injector`3"/>
+               also uses this object to know the endianness and pointer size of the target process.
+            </summary>
+            <param name="targetProc">The object used for performing memory I/O operations on the target process.</param>
+            <seealso cref="M:RAMvader.CodeInjection.Injector`3.GetTargetProcess"/>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetTargetProcess">
+            <summary>
+               Retrieves the current reference to the object used by the <see cref="T:RAMvader.CodeInjection.Injector`3"/> to
+               perform write operations to the target process' memory.
+               The <see cref="T:RAMvader.CodeInjection.Injector`3"/> also uses this object to know the endianness and pointer
+               size of the target process.
+            </summary>
+            <returns>Returns the object used for performing memory I/O operations on the target process.</returns>
+            <seealso cref="M:RAMvader.CodeInjection.Injector`3.SetTargetProcess(RAMvader.RAMvaderTarget)"/>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetTargetProcessPointerSize">
+            <summary>Retrieves the size of the pointers used on the target process.</summary>
+            <returns>Returns the size of the pointers used on the target process, given in bytes.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.SetCodeCavesSeparationBytes(System.Byte[])">
+            <summary>Modifies the sequence of bytes used to separate two consecutive code caves.</summary>
+            <param name="byteSeq">The new sequence of bytes to use as a separator. This can be an empty array, but should not be null.</param>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetCodeCavesSeparationBytes">
+            <summary>Retrieves the sequence of bytes used to separate two consecutive code caves.</summary>
+            <returns>Returns the sequence of bytes used to separate two consecutive code caves in memory.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.SetVariablesSectionSeparationBytes(System.Byte[])">
+            <summary>Modifies the sequence of bytes used to separate the injected code caves section from the injected variables section.</summary>
+            <param name="byteSeq">The new sequence of bytes to use as a separator. This can be an empty array, but should not be null.</param>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetVariablesSectionSeparationBytes">
+            <summary>Retrieves the sequence of bytes used to separate the injected code caves section from the injected variables section.</summary>
+            <returns>Returns the sequence of bytes used to separate two consecutive code caves in memory.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetBaseInjectionAddress">
+            <summary>Retrieves the address where the <see cref="T:RAMvader.CodeInjection.Injector`3"/> has injected its data on the target process.</summary>
+            <returns>
+               Returns the base address where the injection has been performed.
+               If the <see cref="T:RAMvader.CodeInjection.Injector`3"/> didn't perform the injection yet, the return value is IntPtr.Zero.
+            </returns>
+            <seealso cref="M:RAMvader.CodeInjection.Injector`3.Inject"/>
+            <seealso cref="M:RAMvader.CodeInjection.Injector`3.Inject(System.IntPtr)"/>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetCodeCaveOffset(`1)">
+            <summary>Retrieves the offset of a given code cave, relative to the base injection address into the target process' memory space.</summary>
+            <param name="codeCaveID">The identifier of the code cave.</param>
+            <returns>Returns the offset of the given code cave.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetInjectedCodeCaveAddress(`1)">
+            <summary>
+               Retrieves the address of an injected code cave.
+               This method should only be called after a base injection address has been defined for the <see cref="T:RAMvader.CodeInjection.Injector`3"/>
+               to Inject code caves and variables.
+            </summary>
+            <param name="codeCaveID">The identifier of the target code cave.</param>
+            <returns>Returns the address of the given code cave, into the target process' memory space.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetVariableOffset(`2)">
+            <summary>Retrieves the offset of a given variable, relative to the base injection address into the target process' memory space.</summary>
+            <param name="varID">The identifier of the variable whose offset is to be retrieved.</param>
+            <returns>Returns the offset to given variable.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetInjectedVariableAddress(`2)">
+            @param varID 
+            @return  
+            <summary>
+               Retrieves the address of an injected variable.
+               This method should only be called after a base injection address has been defined for
+               the <see cref="T:RAMvader.CodeInjection.Injector`3"/> to Inject code caves and variables.
+            </summary>
+            <param name="varID">The identifier of the target variable.</param>
+            <returns>Returns the address of the given variable, into the target process' memory space.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetInjectedVariableAddressAsBytes(`2)">
+            <summary>Retrieves the address of an injected variable, represented as bytes stored in the target process' memory space.</summary>
+            <param name="varID">The identifier of the target variable.</param>
+            <returns>
+               Returns the array of bytes representing the address of the injected variable, as it is to be stored into the target process'
+               memory space.
+            </returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetVariableSize(`2)">
+            <summary>Retrieves the size of a given injection variable.</summary>
+            <param name="varID">The identifier of the variable whose size is to be retrieved.</param>
+            <returns>Returns the size of the given injection variable, given in bytes.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.CalculateRequiredBytesCount">
+            <summary>
+               Calculates the total number of required bytes to inject the code caves and variables into the target process' memory space.
+               This calculation takes in consideration the separation bytes between two consecutive code caves, the separation between the
+               code caves section and the variables section and the size of each one of the injection variables.
+            </summary>
+            <returns>Returns the number of bytes required to Inject into the target process' memory.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.AddMemoryAlteration(`0,RAMvader.CodeInjection.MemoryAlterationBase)">
+            <summary>
+               Adds a memory alteration to the set of alterations related to a given identifier.
+               Memory alteration sets are kept in as list, and this method adds a memory alteration to the end of this list.
+               The elements of a set of memory alterations are enabled/disabled in the order they get added to the list.
+               You can then call <see cref="M:RAMvader.CodeInjection.Injector`3.SetMemoryAlterationsActive(`0,System.Boolean)"/> to enable or disable the whole set of alterations related to an identifier.
+            </summary>
+            <param name="memoryAlterationSetID">The identifier that identifies the set of alterations that can be enabled/disabled all at once.</param>
+            <param name="memoryAlteration">An object representing the memory alteration that should be added to the given set.</param>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.RemoveMemoryAlteration(`0,RAMvader.CodeInjection.MemoryAlterationBase)">
+            <summary>
+               Removes a memory alteration from the set of alterations related to a given identifier.
+               Memory alteration sets are kept in as list, and this method removes a memory alteration from this list.
+               The elements of a set of memory alterations are enabled/disabled in the order they get added to the list.
+               You can then call <see cref="M:RAMvader.CodeInjection.Injector`3.SetMemoryAlterationsActive(`0,System.Boolean)"/> to enable or disable the whole set of alterations related to an identifier.
+            </summary>
+            <param name="memoryAlterationSetID">The identifier that identifies the set of alterations that can be enabled/disabled all at once.</param>
+            <param name="memoryAlteration">The memory alteration to be removed from the given set.</param>
+            <returns>Returns a flag specifying if the alteration has been removed from the set.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.GetMemoryAlterations(`0)">
+            <summary>Returns an enumerable object containing all memory alterations registered for a given memory alteration set.</summary>
+            <param name="memoryAlterationSetID">The identifier that identifies the set of alterations that can be enabled/disabled all at once.</param>
+            <returns>Returns an enumerable list containing all the memory alterations in the given set.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.SetMemoryAlterationsActive(`0,System.Boolean)">
+            <summary>Activates or deactivates all the memory alterations registered for a given memory alterations set.</summary>
+            <param name="memoryAlterationSetID">The identifier that identifies the set of alterations that can be enabled/disabled all at once.</param>
+            <param name="bActivate">A flag specifying if the alterations should be activated or deactivated.</param>
+            <returns>
+               Returns a flag specifying if all alterations have been activated.
+               If any of the memory alterations in a set fail to be activated/deactivated, the returned value is false.
+            </returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.Inject">
+            <summary>
+               Allocates memory into the target process' memory space and injects the code caves and
+               variables into that allocated memory.
+            </summary>
+            <seealso cref="M:RAMvader.CodeInjection.Injector`3.GetBaseInjectionAddress"/>
+            <exception cref="T:RAMvader.CodeInjection.InjectorException">
+               Thrown when any errors occur regarding the injection process.
+               The data set for this exception specifies the type of error that caused it to be thrown.
+            </exception>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.Inject(System.IntPtr)">
+            <summary>
+               Injects the code caves and variables into the target process' memory space.
+               This overloaded version of the <see cref="M:RAMvader.CodeInjection.Injector`3.Inject"/> method can be used to Inject the code caves into a specific point of the
+               target process' memory space. Notice, though, that for the code caves to work correctly, they need to be injected
+               into a memory region with appropriate permissions. Those are usually READ+WRITE+EXECUTE permissions (READ+WRITE
+               for injected variables and EXECUTE for allowing the target process to execute the code caves). If you need to
+               calculate the total number of bytes required by the <see cref="T:RAMvader.CodeInjection.Injector`3"/> to inject
+               the code caves and variables, see <see cref="M:RAMvader.CodeInjection.Injector`3.CalculateRequiredBytesCount"/>.
+            </summary>
+            <param name="baseInjectionAddress">
+               The address - into the target process' memory space - where the <see cref="T:RAMvader.CodeInjection.Injector`3"/>
+               will Inject the code caves and variables.
+               A value of "IntPtr.Zero" will cause the method to exit without any effect on the target process' memory space.
+            </param>
+            <exception cref="T:RAMvader.CodeInjection.InjectorException">
+               Thrown when any errors occur regarding the injection process.
+               The data set for this exception specifies the type of error that caused it to be thrown.
+            </exception>
+            <seealso cref="M:RAMvader.CodeInjection.Injector`3.GetBaseInjectionAddress"/>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.ResetAllocatedMemoryData">
+            <summary>
+               Resets the internal data of the <see cref="T:RAMvader.CodeInjection.Injector`3"/> regarding the memory region where it has injected its data.
+               This method should be called whenever the target process is terminated or whenever the <see cref="T:RAMvader.CodeInjection.Injector`3"/> object
+               needs to deallocate the memory it has allocated on the target process.
+            </summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.WriteX86CallInstruction(System.IntPtr,System.IntPtr,System.Int32)">
+            <summary>
+               Writes a x86 CALL instruction at a specific point of the target process' memory space to enable the process' execution flow
+               to be detoured to a specific address.
+            </summary>
+            <param name="detourPoint">The address of the target process' memory space where the CALL instruction will be written.</param>
+            <param name="targetAddress">The address to where the target process' execution should be diverted.</param>
+            <param name="instructionSize">
+               The size of the instruction that is going to be replaced by the CALL instruction.
+               This is used to fill the remaining bytes of the instruction with NOP opcodes, so that when the execution flows back from
+               the CALL instruction, nothing unexpected happens.
+            </param>
+            <returns>Returns a flag indicating the success of the operation.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.WriteX86CallToCodeCaveInstruction(System.IntPtr,`1,System.Int32)">
+            <summary>
+               Writes a x86 CALL instruction at a specific point of the target process' memory space to enable the process'
+               execution flow to be detoured to a specific, injected code cave.
+            </summary>
+            <param name="detourPoint">The address of the target process' memory space where the CALL instruction will be written.</param>
+            <param name="codeCave">The code cave to where the target process' execution should be diverted.</param>
+            <param name="instructionSize">
+               The size of the instruction that is going to be replaced by the CALL instruction.
+               This is used to fill the remaining bytes of the instruction with NOP opcodes, so that when the execution flows back from
+               the CALL instruction, nothing unexpected happens.
+            </param>
+            <returns>Returns a flag indicating the success of the operation.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.WriteX86NearJumpInstruction(RAMvader.EJumpInstructionType,System.IntPtr,System.IntPtr,System.Int32)">
+            <summary>
+               Writes a x86 NEAR JUMP instruction at a specific point of the target process' memory space to enable the process'
+               execution flow to be detoured to a specific address.
+            </summary>
+            <param name="jumpInstructionType">The specific type of jump instruction to be written.</param>
+            <param name="detourPoint">The address of the target process' memory space where the JUMP instruction will be written.</param>
+            <param name="targetAddress">The address to where the target process' execution should be diverted.</param>
+            <param name="instructionSize">
+               The size of the instruction that is going to be replaced by the JUMP instruction.
+               This is used to fill the remaining bytes of the instruction with NOP opcodes, to keep the other instructions' balance
+               unaffected by the new jump instruction.
+            </param>
+            <returns>Returns a flag indicating the success of the operation.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.WriteX86NearJumpToCodeCaveInstruction(RAMvader.EJumpInstructionType,System.IntPtr,`1,System.Int32)">
+            <summary>
+               Writes a x86 NEAR JUMP instruction at a specific point of the target process' memory space to enable the process'
+               execution flow to be detoured to a specific, injected code cave.
+            </summary>
+            <param name="jumpInstructionType">The specific type of jump instruction to be written.</param>
+            <param name="detourPoint">The address of the target process' memory space where the JUMP instruction will be written.</param>
+            <param name="codeCave">The code cave to where the target process' execution should be diverted.</param>
+            <param name="instructionSize">
+               The size of the instruction that is going to be replaced by the JUMP instruction.
+               This is used to fill the remaining bytes of the instruction with NOP opcodes, so that the target process' code remains
+               balanced and stable for debuggers.
+            </param>
+            <returns>Returns a flag indicating the success of the operation.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.WriteX86FarJumpInstruction(RAMvader.EJumpInstructionType,System.IntPtr,System.IntPtr,System.Int32)">
+            <summary>
+               Writes a x86 FAR JUMP instruction at a specific point of the target process' memory space to enable the process'
+               execution flow to be detoured to a specific address.
+            </summary>
+            <param name="jumpInstructionType">The specific type of jump instruction to be written.</param>
+            <param name="detourPoint">The address of the target process' memory space where the JUMP instruction will be written.</param>
+            <param name="targetAddress">The address to where the target process' execution should be diverted.</param>
+            <param name="instructionSize">
+               The size of the instruction that is going to be replaced by the JUMP instruction.
+               This is used to fill the remaining bytes of the instruction with NOP opcodes, to keep the other instructions' balance
+               unaffected by the new jump instruction.
+            </param>
+            <returns>Returns a flag indicating the success of the operation.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.WriteX86FarJumpToCodeCaveInstruction(RAMvader.EJumpInstructionType,System.IntPtr,`1,System.Int32)">
+            		 * @param jumpInstructionType 
+                     * @param detourPoint 
+                     * @param codeCave 
+                     * @param instructionSize  
+            <summary>
+               Writes a x86 FAR JUMP instruction at a specific point of the target process' memory space to enable the process'
+               execution flow to be detoured to a specific, injected code cave.
+            </summary>
+            <param name="jumpInstructionType">The specific type of jump instruction to be written.</param>
+            <param name="detourPoint">The address of the target process' memory space where the JUMP instruction will be written.</param>
+            <param name="codeCave">The code cave to where the target process' execution should be diverted.</param>
+            <param name="instructionSize">
+               The size of the instruction that is going to be replaced by the JUMP instruction.
+               This is used to fill the remaining bytes of the instruction with NOP opcodes, so that the target process' code remains
+               balanced and stable for debuggers.
+            </param>
+            <returns>Returns a flag indicating the success of the operation.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.WriteVariableValue(`2,System.Object)">
+            <summary>
+               Updates the value of a given variable into the target process' memory.
+               This method is safe, as it checks the given variable's metadata against the given value's type to see if it matches
+               the variable's type before updating the variable's value.
+            </summary>
+            <param name="variableID">The identifier of the injected variable whose value is to be updated.</param>
+            <param name="newValue">The new value for the variable.</param>
+            <returns>Returns the result of the write operation performed by a call to <see cref="M:RAMvader.RAMvaderTarget.WriteToTarget(System.IntPtr,System.Object)"/>.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.ReadVariableValue(`2,System.Object@)">
+            <summary>
+               Reads the current value of a given variable from the target process' memory.
+               This method is safe, as it checks the given variable's metadata against the given output variable's type to
+               see if it matches the injected variable's type before reading the output value.
+            </summary>
+            <param name="variableID">The identifier of the variable whose value is to be read from the target process' memory space.</param>
+            <param name="outputValue">The variable which will receive the read value.</param>
+            <returns>Returns the result of the read operation performed by a call to <see cref="M:RAMvader.RAMvaderTarget.ReadFromTarget(System.IntPtr,System.Object@)"/>.</returns>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.DEFAULT_INDEXER_PROPERTY_NAME">
+            <summary>
+               The default name of an indexer property, which is used to raise the "property changed"
+               event (provided by standard WPF INotifyPropertyChanged implementation) when a indexer property
+               has its value updated.
+            </summary>
+        </member>
+        <member name="T:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerCodeCaveOffset">
+            <summary>Provides an indexer used to access code cave offsets, through the property <see cref="P:RAMvader.CodeInjection.Injector`3.CodeCaveOffset"/>.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerCodeCaveOffset.m_injector">
+            <summary>Reference to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> which owns this object.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerCodeCaveOffset.#ctor(RAMvader.CodeInjection.Injector{`0,`1,`2})">
+            <summary>
+               Constructor.
+               The internal scope-modifier ensures this class will not be instanced outside of the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class.
+            </summary>
+            <param name="injector">A reference to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> object used to retrieve data for the indexer property.</param>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerCodeCaveOffset.Item(`1)">
+            <summary>Indexer used to retrieve the offset of a code cave, through a call to <see cref="M:RAMvader.CodeInjection.Injector`3.GetCodeCaveOffset(`1)"/>.</summary>
+            <param name="codeCaveID">The identifier of the code cave whose offset is to be retrieved.</param>
+            <returns>Returns the offset of the given code cave.</returns>
+        </member>
+        <member name="T:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerInjectedCodeCaveAddress">
+            <summary>
+               Provides an indexer used to access the address where a code cave has been injected,
+               through <see cref="P:RAMvader.CodeInjection.Injector`3.InjectedCodeCaveAddress"/>.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerInjectedCodeCaveAddress.m_injector">
+            <summary>Reference to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> which owns this object.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerInjectedCodeCaveAddress.#ctor(RAMvader.CodeInjection.Injector{`0,`1,`2})">
+            <summary>
+               Constructor.
+               The internal scope-modifier ensures this class will not be instanced outside of the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class.
+            </summary>
+            <param name="injector">A reference to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> object used to retrieve data for the indexer property.</param>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerInjectedCodeCaveAddress.Item(`1)">
+            <summary>
+               Indexer used to retrieve the address where a code cave has been injected, through a call
+               to <see cref="T:RAMvader.CodeInjection.Injector`3"/>.GetInjectedCodeCaveAddress().
+            </summary>
+            <param name="codeCaveID">The identifier of the code cave whose injected address is to be retrieved.</param>
+            <returns>Returns the address where the code cave has been injected.</returns>
+        </member>
+        <member name="T:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerVariableOffset">
+            <summary>Provides an indexer used to access variable offsets, through the property <see cref="T:RAMvader.CodeInjection.Injector`3"/>.VariableOffset.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerVariableOffset.m_injector">
+            <summary>Reference to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> which owns this object.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerVariableOffset.#ctor(RAMvader.CodeInjection.Injector{`0,`1,`2})">
+            <summary>
+               Constructor.
+               The internal scope-modifier ensures this class will not be instanced outside of the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class.
+            </summary>
+            <param name="injector">A reference to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> object used to retrieve data for the indexer property.</param>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerVariableOffset.Item(`2)">
+            <summary>Indexer used to retrieve the offset of a variable, through a call to <see cref="T:RAMvader.CodeInjection.Injector`3"/>.GetVariableOffset().</summary>
+            <param name="variableID">The identifier of the variable whose offset is to be retrieved.</param>
+            <returns>Returns the offset of the given variable.</returns>
+        </member>
+        <member name="T:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerInjectedVariableAddress">
+            <summary>
+               Provides an indexer used to access the address where a variable has been injected,
+               through the property <see cref="T:RAMvader.CodeInjection.Injector`3"/>.InjectedVariableAddress.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerInjectedVariableAddress.m_injector">
+            <summary>Reference to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> which owns this object.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerInjectedVariableAddress.#ctor(RAMvader.CodeInjection.Injector{`0,`1,`2})">
+            <summary>
+               Constructor.
+               The internal scope-modifier ensures this class will not be instanced outside of the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class.
+            </summary>
+            <param name="injector">A reference to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> object used to retrieve data for the indexer property.</param>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerInjectedVariableAddress.Item(`2)">
+            <summary>
+               Indexer used to retrieve the address where a variable has been injected, through a call
+               to <see cref="T:RAMvader.CodeInjection.Injector`3"/>.GetInjectedVariableAddress().
+            </summary>
+            <param name="variableID">The identifier of the variable whose injected address is to be retrieved.</param>
+            <returns>Returns the address where the given variable has been injected.</returns>
+        </member>
+        <member name="T:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerVariableSize">
+            <summary>
+               Provides an indexer used to retrieve the size of a variable,
+               through the property <see cref="T:RAMvader.CodeInjection.Injector`3"/>.VariableSize.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerVariableSize.m_injector">
+            <summary>Reference to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> which owns this object.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerVariableSize.#ctor(RAMvader.CodeInjection.Injector{`0,`1,`2})">
+            <summary>
+               Constructor.
+               The internal scope-modifier ensures this class will not be instanced outside of the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class.
+            </summary>
+            <param name="injector">A reference to the <see cref="T:RAMvader.CodeInjection.Injector`3"/> object used to retrieve data for the indexer property.</param>
+        </member>
+        <member name="P:RAMvader.CodeInjection.Injector`3.NestedPropertyIndexerVariableSize.Item(`2)">
+            <summary>Indexer used to retrieve the size of a variable, through a call to <see cref="T:RAMvader.CodeInjection.Injector`3"/>.GetVariableSize().</summary>
+            <param name="variableID">The identifier of the variable whose size is to be retrieved.</param>
+            <returns>Returns the size of the given variable.</returns>
+        </member>
+        <member name="T:RAMvader.CodeInjection.InjectorException">
+            <summary>A generic expection that might be thrown by the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.InjectorException.#ctor(System.String)">
+            <summary>Constructor.</summary>
+            <param name="msg">The message used to initialize the Exception.</param>
+        </member>
+        <member name="T:RAMvader.CodeInjection.LowLevel">
+            <summary>This class is used to keep low-level definitions, such as opcodes that can be used to generate x86 code.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_NOP">
+            <summary>The byte value for the x86 NOP instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_INT3">
+            <summary>The byte value for the x86 INT3 instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_CALL">
+            <summary>Represents the byte value for the x86 CALL instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_NEAR_JMP">
+            <summary>Represents the byte value for the x86 NEAR JMP instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_NEAR_JA">
+            <summary>Represents the byte value for the x86 NEAR JA instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_NEAR_JB">
+            <summary>Represents the byte value for the x86 NEAR JB instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_NEAR_JG">
+            <summary>Represents the byte value for the x86 NEAR JG instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_NEAR_JL">
+            <summary>Represents the byte value for the x86 NEAR JL instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_NEAR_JE">
+            <summary>Represents the byte value for the x86 NEAR JE instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_NEAR_JNE">
+            <summary>Represents the byte value for the x86 NEAR JNE instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_FAR_JMP">
+            <summary>Represents the byte value for the x86 FAR JMP instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_FAR_JA">
+            <summary>Represents the byte value for the x86 FAR JA instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_FAR_JB">
+            <summary>Represents the byte value for the x86 FAR JB instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_FAR_JG">
+            <summary>Represents the byte value for the x86 FAR JG instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_FAR_JL">
+            <summary>Represents the byte value for the x86 FAR JL instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_FAR_JE">
+            <summary>Represents the byte value for the x86 FAR JE instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.OPCODE_x86_FAR_JNE">
+            <summary>Represents the byte value for the x86 FAR JNE instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.INSTRUCTION_SIZE_x86_CALL">
+            <summary>The size of a x86 CALL instruction, given in bytes.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.LowLevel.INSTRUCTION_SIZE_x86_NEAR_JUMP">
+            <summary>
+               The size of a x86 NEAR JUMP instruction, given in bytes.
+               Near jumps allow jumps to instructions up to a distance of 0xFF bytes.
+            </summary>
+        </member>
+        <member name="T:RAMvader.CodeInjection.MemoryAlterationBase">
+            <summary>Base class for all memory alterations that can be performed through the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.MemoryAlterationBase.m_targetOriginalBytes">
+            <summary>Backs the <see cref="P:RAMvader.CodeInjection.MemoryAlterationBase.TargetOriginalBytes"/> property.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.MemoryAlterationBase.m_targetAddress">
+            <summary>Backs the <see cref="P:RAMvader.CodeInjection.MemoryAlterationBase.TargetAddress"/> property.</summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.MemoryAlterationBase.TargetOriginalBytes">
+            <summary>
+               Keeps the bytes that represent the original instruction or value that was in
+               memory before the memory alteration got activated.
+            </summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.MemoryAlterationBase.TargetAddress">
+            <summary>The address (in the target process' memory space) where the memory alteration will occur.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationBase.SetEnabled``3(RAMvader.CodeInjection.Injector{``0,``1,``2},System.Boolean)">
+            <summary>Called to activate or deactivate a memory alteration into the target process' memory space.</summary>
+            <typeparam name="TMemoryAlterationID">The enumeration of Memory Alteration Sets used for the <see cref="T:RAMvader.CodeInjection.Injector`3"/>.</typeparam>
+            <typeparam name="TCodeCave">The enumeration of Code Caves used for the <see cref="T:RAMvader.CodeInjection.Injector`3"/>.</typeparam>
+            <typeparam name="TVariable">The enumeration of Injection Variables used for the <see cref="T:RAMvader.CodeInjection.Injector`3"/>.</typeparam>
+            <param name="injectorRef">A reference to an <see cref="T:RAMvader.CodeInjection.Injector`3"/> object, with which you can perform I/O operations on the target process' memory space and access related data, like values and addresses of variables and code caves.</param>
+            <param name="bEnable">A flag specifying if the memory alteration should be enabled or disabled.</param>
+            <returns>Returns a flag specifying if the operation was successful or not.</returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationBase.#ctor(RAMvader.RAMvaderTarget,System.IntPtr,System.Int32)">
+            <summary>
+               Constructor.
+               The constructor will read the bytes of the target process' memory space and keep a "snapshot" of it at the moment the
+               constructor is called. When a memory alteration gets disabled, this "snapshot" will be used to restore the original
+               bytes of the instruction or value that was in the target process' memory space before it was activated.
+            </summary>
+            <param name="targetIORef">A reference to the <see cref="T:RAMvader.RAMvaderTarget"/> object that will be used to read the target process' memory space.</param>
+            <param name="targetAddress">The address (in the target process' memory space) where the memory alteration will take place.</param>
+            <param name="targetSize">The size - given in bytes - of the instruction or value that the memory alteration will affect.</param>
+        </member>
+        <member name="T:RAMvader.CodeInjection.MemoryAlterationX86Call">
+            <summary>Represents a memory alteration that overwrites instructions of the target process' memory space with x86 CALL instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.MemoryAlterationX86Call.m_codeCaveID">
+            <summary>The identifier of the code cave to which the CALL instruction will make the target process' code flow.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationX86Call.#ctor(RAMvader.RAMvaderTarget,System.IntPtr,System.Enum,System.Int32)">
+            <summary>Constructor.</summary>
+            <param name="targetIORef">
+               A reference to the <see cref="T:RAMvader.RAMvaderTarget"/> object that will be used to read the target process' memory space.
+               This <see cref="T:RAMvader.RAMvaderTarget"/> MUST be attached to a process, as it will be used in this constructor method to read the process'
+               memory and keep a snapshot of the original bytes at the given 'targetAddress' for restoring their values,
+               whenever <see cref="M:RAMvader.CodeInjection.MemoryAlterationX86Call.SetEnabled``3(RAMvader.CodeInjection.Injector{``0,``1,``2},System.Boolean)"/> is called to deactivate a memory alteration.
+            </param>
+            <param name="targetAddress">The address of the instruction(s) that will be replaced x86 CALL instruction.</param>
+            <param name="targetCodeCaveID">The target code cave, to which the code should be diverted.</param>
+            <param name="instructionSize">The size of the instruction(s) that will be replaced with NOP instructions.</param>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationX86Call.SetEnabled``3(RAMvader.CodeInjection.Injector{``0,``1,``2},System.Boolean)">
+            <summary>Called to activate or deactivate a memory alteration into the target process' memory space.</summary>
+            <typeparam name="TMemoryAlterationID">The enumeration of Memory Alteration Sets used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <typeparam name="TCodeCave">The enumeration of Code Caves used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <typeparam name="TVariable">The enumeration of Injection Variables used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <param name="injectorRef">
+               A reference to an <see cref="T:RAMvader.CodeInjection.Injector`3" /> object, with which you can perform I/O operations
+               on the target process' memory space and access related data, like values and addresses of variables and code caves.
+            </param>
+            <param name="bEnable">A flag specifying if the memory alteration should be enabled or disabled.</param>
+            <returns>Returns a flag specifying if the operation was successful or not.</returns>
+        </member>
+        <member name="T:RAMvader.CodeInjection.MemoryAlterationX86NearJump">
+            <summary>
+               Represents a memory alteration that overwrites instructions of the target process' memory space with x86 NEAR JUMP instruction.
+               ATTENTION: It is NOT recommended that you use NEAR JUMP instructions to jump to code caves that belong to automatically-allocated
+               memory (which is the default behaviour of the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class). If you need to jump to a code cave in automatically-allocated memory spaces,
+               you should strongly consider using <see cref="T:RAMvader.CodeInjection.MemoryAlterationX86FarJump"/> instead of <see cref="T:RAMvader.CodeInjection.MemoryAlterationX86NearJump"/>.
+            </summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.MemoryAlterationX86NearJump.m_codeCaveID">
+            <summary>The identifier of the code cave to which the JUMP instruction will make the target process' code flow.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.MemoryAlterationX86NearJump.m_jumpType">
+            <summary>The identifier of the type of x86 FAR JUMP instruction to be generated.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationX86NearJump.#ctor(RAMvader.RAMvaderTarget,System.IntPtr,System.Enum,RAMvader.EJumpInstructionType,System.Int32)">
+            <summary>Constructor</summary>
+            <param name="targetIORef">
+               A reference to the <see cref="T:RAMvader.RAMvaderTarget"/> object that will be used to read the target process' memory space.
+               This <see cref="T:RAMvader.RAMvaderTarget"/> MUST be attached to a process, as it will be used in this constructor method to read the process'
+               memory and keep a snapshot of the original bytes at the given 'targetAddress' for restoring their values,
+               whenever <see cref="M:RAMvader.CodeInjection.MemoryAlterationX86NearJump.SetEnabled``3(RAMvader.CodeInjection.Injector{``0,``1,``2},System.Boolean)"/> is called to deactivate a memory alteration.
+            </param>
+            <param name="targetAddress">The address of the instruction(s) that will be replaced x86 NEAR JUMP instruction.</param>
+            <param name="targetCodeCaveID">The target code cave, to which the code should be diverted.</param>
+            <param name="jumpInstructionType">The specific type of jump instruction that should be generated.</param>
+            <param name="instructionSize">The size of the instruction that is going to be replaced on the target process' memory space.</param>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationX86NearJump.SetEnabled``3(RAMvader.CodeInjection.Injector{``0,``1,``2},System.Boolean)">
+            <summary>Called to activate or deactivate a memory alteration into the target process' memory space.</summary>
+            <typeparam name="TMemoryAlterationID">The enumeration of Memory Alteration Sets used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <typeparam name="TCodeCave">The enumeration of Code Caves used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <typeparam name="TVariable">The enumeration of Injection Variables used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <param name="injectorRef">A reference to an <see cref="T:RAMvader.CodeInjection.Injector`3"/> object, with which you can perform I/O operations on the target process' memory space and access related data, like values and addresses of variables and code caves.</param>
+            <param name="bEnable">A flag specifying if the memory alteration should be enabled or disabled.</param>
+            <returns>Returns a flag specifying if the operation was successful or not.</returns>
+        </member>
+        <member name="T:RAMvader.CodeInjection.MemoryAlterationX86FarJump">
+            <summary>Represents a memory alteration that overwrites instructions of the target process' memory space with x86 FAR JUMP instruction.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.MemoryAlterationX86FarJump.m_codeCaveID">
+            <summary>The identifier of the code cave to which the JUMP instruction will make the target process' code flow.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.MemoryAlterationX86FarJump.m_jumpType">
+            <summary>The identifier of the type of x86 FAR JUMP instruction to be generated.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationX86FarJump.#ctor(RAMvader.RAMvaderTarget,System.IntPtr,System.Enum,RAMvader.EJumpInstructionType,System.Int32)">
+            <summary>Constructor.</summary>
+            <param name="targetIORef">
+               A reference to the <see cref="T:RAMvader.RAMvaderTarget"/> object that will be used to read the target process' memory space.
+               This <see cref="T:RAMvader.RAMvaderTarget"/> MUST be attached to a process, as it will be used in this constructor method to read the process'
+               memory and keep a snapshot of the original bytes at the given 'targetAddress' for restoring their values,
+               whenever <see cref="M:RAMvader.CodeInjection.MemoryAlterationX86FarJump.SetEnabled``3(RAMvader.CodeInjection.Injector{``0,``1,``2},System.Boolean)"/> is called to deactivate a memory alteration.
+            </param>
+            <param name="targetAddress">The address of the instruction(s) that will be replaced x86 NEAR JUMP instruction.</param>
+            <param name="targetCodeCaveID">The target code cave, to which the code should be diverted.</param>
+            <param name="jumpInstructionType">The specific type of jump instruction that should be generated.</param>
+            <param name="instructionSize">The size of the instruction(s) that will be replaced with NOP instructions.</param>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationX86FarJump.SetEnabled``3(RAMvader.CodeInjection.Injector{``0,``1,``2},System.Boolean)">
+            <summary>Called to activate or deactivate a memory alteration into the target process' memory space.</summary>
+            <typeparam name="TMemoryAlterationID">The enumeration of Memory Alteration Sets used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <typeparam name="TCodeCave">The enumeration of Code Caves used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <typeparam name="TVariable">The enumeration of Injection Variables used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <param name="injectorRef">A reference to an <see cref="T:RAMvader.CodeInjection.Injector`3"/> object, with which you can perform I/O operations on the target process' memory space and access related data, like values and addresses of variables and code caves.</param>
+            <param name="bEnable">A flag specifying if the memory alteration should be enabled or disabled.</param>
+            <returns>Returns a flag specifying if the operation was successful or not.</returns>
+        </member>
+        <member name="T:RAMvader.CodeInjection.MemoryAlterationNOP">
+            <summary>Represents a memory alteration that overwrites instructions of the target process' memory space with NOP instructions.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationNOP.#ctor(RAMvader.RAMvaderTarget,System.IntPtr,System.Int32)">
+            <summary>Constructor.</summary>
+            <param name="targetIORef">
+               A reference to the <see cref="T:RAMvader.RAMvaderTarget"/> object that will be used to read the target process' memory space.
+               This <see cref="T:RAMvader.RAMvaderTarget"/> MUST be attached to a process, as it will be used in this constructor method to read the process'
+               memory and keep a snapshot of the original bytes at the given 'targetAddress' for restoring their values,
+               whenever <see cref="M:RAMvader.CodeInjection.MemoryAlterationNOP.SetEnabled``3(RAMvader.CodeInjection.Injector{``0,``1,``2},System.Boolean)"/> is called to deactivate a memory alteration.
+            </param>
+            <param name="targetAddress">The address of the instruction(s) that will be replaced with NOP instructions.</param>
+            <param name="instructionSize">The size of the instruction(s) that will be replaced with NOP instructions.</param>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationNOP.SetEnabled``3(RAMvader.CodeInjection.Injector{``0,``1,``2},System.Boolean)">
+            <summary>Called to activate or deactivate a memory alteration into the target process' memory space.</summary>
+            <typeparam name="TMemoryAlterationID">The enumeration of Memory Alteration Sets used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <typeparam name="TCodeCave">The enumeration of Code Caves used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <typeparam name="TVariable">The enumeration of Injection Variables used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <param name="injectorRef">A reference to an <see cref="T:RAMvader.CodeInjection.Injector`3"/> object, with which you can perform I/O operations on the target process' memory space and access related data, like values and addresses of variables and code caves.</param>
+            <param name="bEnable">A flag specifying if the memory alteration should be enabled or disabled.</param>
+            <returns>Returns a flag specifying if the operation was successful or not.</returns>
+        </member>
+        <member name="T:RAMvader.CodeInjection.MemoryAlterationPoke">
+            <summary>Represents a memory alteration that overwrites instructions of the target process' memory space with custom bytes.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.MemoryAlterationPoke.m_customBytes">
+            <summary>Keeps the custom bytes that will replace the target instruction(s).</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationPoke.#ctor(RAMvader.RAMvaderTarget,System.IntPtr,System.Byte[])">
+            <summary>Constructor.</summary>
+            <param name="targetIORef">
+               A reference to the <see cref="T:RAMvader.RAMvaderTarget"/> object that will be used to read the target process' memory space.
+               This <see cref="T:RAMvader.RAMvaderTarget"/> MUST be attached to a process, as it will be used in this constructor method to read the process'
+               memory and keep a snapshot of the original bytes at the given 'targetAddress' for restoring their values,
+               whenever <see cref="M:RAMvader.CodeInjection.MemoryAlterationPoke.SetEnabled``3(RAMvader.CodeInjection.Injector{``0,``1,``2},System.Boolean)"/> is called to deactivate a memory alteration.
+            </param>
+            <param name="targetAddress">The address of the instruction(s) that will be replaced with custom bytes.</param>
+            <param name="customBytes">
+               The bytes which will replace the instruction(s) at the given address.
+               The length of this array is used to determine the size of the instructions to be replaced at that address.
+            </param>
+        </member>
+        <member name="M:RAMvader.CodeInjection.MemoryAlterationPoke.SetEnabled``3(RAMvader.CodeInjection.Injector{``0,``1,``2},System.Boolean)">
+            <summary>Called to activate or deactivate a memory alteration into the target process' memory space.</summary>
+            <typeparam name="TMemoryAlterationID">The enumeration of Memory Alteration Sets used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <typeparam name="TCodeCave">The enumeration of Code Caves used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <typeparam name="TVariable">The enumeration of Injection Variables used for the <see cref="T:RAMvader.CodeInjection.Injector`3" />.</typeparam>
+            <param name="injectorRef">A reference to an <see cref="T:RAMvader.CodeInjection.Injector`3"/> object, with which you can perform I/O operations on the target process' memory space and access related data, like values and addresses of variables and code caves.</param>
+            <param name="bEnable">A flag specifying if the memory alteration should be enabled or disabled.</param>
+            <returns>Returns a flag specifying if the operation was successful or not.</returns>
+        </member>
+        <member name="T:RAMvader.CodeInjection.VariableDefinitionAttribute">
+            <summary>Keeps the metadata related to an injection variable.</summary>
+        </member>
+        <member name="F:RAMvader.CodeInjection.VariableDefinitionAttribute.m_initialValue">
+            <summary>
+               Stores the initial value for the variable. Used to initialize the
+               variable's value, when it is first injected into the target process'
+               memory.
+            </summary>
+        </member>
+        <member name="P:RAMvader.CodeInjection.VariableDefinitionAttribute.InitialValue">
+            <summary>Backed by the <see cref="F:RAMvader.CodeInjection.VariableDefinitionAttribute.m_initialValue"/> field.</summary>
+        </member>
+        <member name="M:RAMvader.CodeInjection.VariableDefinitionAttribute.GetVariableDefinitionAttributeFromEnum(System.Enum)">
+            <summary>Utility method which retrieves the <see cref="T:RAMvader.CodeInjection.VariableDefinitionAttribute"/> from the given enumerator value.</summary>
+            <param name="elm">The enumerator from which the <see cref="T:RAMvader.CodeInjection.VariableDefinitionAttribute"/> should be retrieved.</param>
+            <returns>
+               Returns the <see cref="T:RAMvader.CodeInjection.VariableDefinitionAttribute"/> associated with the given enumerator, if any.
+               Returns null if no <see cref="T:RAMvader.CodeInjection.VariableDefinitionAttribute"/> is associated with the given enumerator.
+            </returns>
+        </member>
+        <member name="M:RAMvader.CodeInjection.VariableDefinitionAttribute.#ctor(System.Object)">
+            <summary>Constructor.</summary>
+            <param name="initialValue">
+               The initial value of the variable.
+               This should be specified with structures from the basic values which are supported by
+               the <see cref="T:RAMvader.CodeInjection.Injector`3"/> (Byte, Int32, UInt64, Single, Double, etc.). By providing these structures, you are both telling
+               the injector about the SIZE of the injected variable and its initial value.
+            </param>
+        </member>
+        <member name="T:RAMvader.EEndianness">
+            <summary>Defines the possible endianness options which RAMvader can operate on.</summary>
+        </member>
+        <member name="F:RAMvader.EEndianness.evEndiannessDefault">
+            <summary>A value indicating that RAMvader should operate in the same endianness as the process that RAMvader is running on.</summary>
+        </member>
+        <member name="F:RAMvader.EEndianness.evEndiannessLittle">
+            <summary>A value indicating that RAMvader should operate in Little-Endian byte order.</summary>
+        </member>
+        <member name="F:RAMvader.EEndianness.evEndiannessBig">
+            <summary>A value indicating that RAMvader should operate in Big-Endian byte order.</summary>
+        </member>
+        <member name="T:RAMvader.EPointerSize">
+            <summary>Defines the supported pointer sizes for the target process.</summary>
+        </member>
+        <member name="F:RAMvader.EPointerSize.evPointerSizeDefault">
+            <summary>
+               The default pointer size configuration, where the target process' pointer size is assumed to be the same as the pointer
+               size of the process which runs RAMvader. The pointer size can be retrieved through IntPtr.Size.
+            </summary>
+        </member>
+        <member name="F:RAMvader.EPointerSize.evPointerSize32">
+            <summary>Explicitly identifies a 32-bit pointer.</summary>
+        </member>
+        <member name="F:RAMvader.EPointerSize.evPointerSize64">
+            <summary>Explicitly identifies a 64-bit pointer.</summary>
+        </member>
+        <member name="T:RAMvader.EDifferentPointerSizeError">
+            <summary>Defines how errors with different pointer sizes are handled by the library.</summary>
+        </member>
+        <member name="F:RAMvader.EDifferentPointerSizeError.evThrowException">
+            <summary>
+               Throws an exception if the target process and the process which runs RAMvader have different pointer sizes.
+               This is the default behaviour, for safety reasons.
+            </summary>
+        </member>
+        <member name="F:RAMvader.EDifferentPointerSizeError.evSafeTruncation">
+            <summary>
+               If the target process and the process which uses RAMvader have different pointer sizes, operations with pointers truncate
+               the pointers to 32-bits when necessary. If any data is lost during the truncation process, a <see cref="T:RAMvader.PointerDataLostException"/>
+               is thrown.
+            </summary>
+        </member>
+        <member name="F:RAMvader.EDifferentPointerSizeError.evUnsafeTruncation">
+            <summary>
+               If the target process and the process which uses RAMvader have different pointer sizes, operations with pointers truncate the
+               pointers to 32-bits when necessary. If any data is lost during the truncation process, nothing happens. Thus, this is the less
+               recommended option and should be used with caution.
+            </summary>
+        </member>
+        <member name="T:RAMvader.EJumpInstructionType">
+            <summary>Defines the types of JUMP instructions that can be generated by the <see cref="T:RAMvader.CodeInjection.Injector`3"/> class.</summary>
+        </member>
+        <member name="F:RAMvader.EJumpInstructionType.evJMP">
+            <summary>Identifies the jump instruction: JMP ("unconditional jump).</summary>
+        </member>
+        <member name="F:RAMvader.EJumpInstructionType.evJA">
+            <summary>Identifies the jump instruction: JA ("jump if above" - for unsigned values).</summary>
+        </member>
+        <member name="F:RAMvader.EJumpInstructionType.evJB">
+            <summary>Identifies the jump instruction: JB ("jump if below" - for unsigned values).</summary>
+        </member>
+        <member name="F:RAMvader.EJumpInstructionType.evJG">
+            <summary>Identifies the jump instruction: JG ("jump if greater than" - for signed values).</summary>
+        </member>
+        <member name="F:RAMvader.EJumpInstructionType.evJL">
+            <summary>Identifies the jump instruction: JL ("jump if less than" - for signed values).</summary>
+        </member>
+        <member name="F:RAMvader.EJumpInstructionType.evJE">
+            <summary>Identifies the jump instruction: JE ("jump if equal").</summary>
+        </member>
+        <member name="F:RAMvader.EJumpInstructionType.evJNE">
+            <summary>Identifies the jump instruction: JNE ("jump if not equal").</summary>
+        </member>
+        <member name="T:RAMvader.InstanceAlreadyAttachedException">
+            <summary>
+               Exception thrown when the user tries to attach a <see cref="T:RAMvader.RAMvaderTarget"/> instance to a process, but the instance
+               is already attached to another process. Before attaching to a process, the <see cref="T:RAMvader.RAMvaderTarget"/> instance must
+               be detached from any other process.
+            </summary>
+        </member>
+        <member name="M:RAMvader.InstanceAlreadyAttachedException.#ctor(System.Diagnostics.Process)">
+            <summary>Constructor.</summary>
+            <param name="oldProcess">The process to which the <see cref="T:RAMvader.RAMvaderTarget"/> instance is currently attached.</param>
+        </member>
+        <member name="T:RAMvader.InstanceNotAttachedException">
+            <summary>
+               Exception thrown when the user code tries to detach a <see cref="T:RAMvader.RAMvaderTarget"/> instance
+               from its target process, but the <see cref="T:RAMvader.RAMvaderTarget"/> instance has not been attached to
+               any process.
+            </summary>
+        </member>
+        <member name="M:RAMvader.InstanceNotAttachedException.#ctor">
+            <summary>Constructor.</summary>
+        </member>
+        <member name="T:RAMvader.PointerDataLostException">
+            <summary>
+               An exception which is thrown when trying to perform an I/O operation with pointers between
+               two processes with different pointer sizes.
+            </summary>
+        </member>
+        <member name="M:RAMvader.PointerDataLostException.#ctor(System.Boolean)">
+            <summary>Constructor.</summary>
+            <param name="bIsReadOperation">A flag specifying if the exception has been thrown during a read operation (true) or a write operation (false).</param>
+        </member>
+        <member name="T:RAMvader.NotifyPropertyChangedAdapter">
+            <summary>
+               An adapter class to make the implementation of the INotifyPropertyChanged interface easier
+               for any class willing to provide that implementation.
+            </summary>
+        </member>
+        <member name="E:RAMvader.NotifyPropertyChangedAdapter.PropertyChanged">
+            <summary>Used for implementing the <see cref="T:System.ComponentModel.INotifyPropertyChanged"/> interface.</summary>
+        </member>
+        <member name="M:RAMvader.NotifyPropertyChangedAdapter.SendPropertyChangedNotification(System.String)">
+            <summary>
+               This method should be called inside PROPERTY SETTER METHODS to notify
+               listeners of the "property changed" event that the property has been updated.
+            </summary>
+            <param name="propertyName">
+               This parameter is automatically filled with the name of the
+               updated property by the compiler, as long as it is called with no parameters
+               inside a property-setter method.
+            </param>
+        </member>
+        <member name="T:RAMvader.RAMvaderException">
+            <summary>The base class for all exceptions from the RAMvader library.</summary>
+        </member>
+        <member name="M:RAMvader.RAMvaderException.#ctor(System.String)">
+            <summary>Constructor.</summary>
+            <param name="msg">The message associated to the exception.</param>
+        </member>
+        <member name="T:RAMvader.RAMvaderTarget">
+            <summary>
+               RAMvader library's core class.
+               Instances of this class are able to "attach" to processes and execute reading and writing operations in their memory spaces.
+            </summary>
+        </member>
+        <member name="F:RAMvader.RAMvaderTarget.SUPPORTED_DATA_TYPES_SIZE">
+            <summary>
+               A dictionary containing both all basic data types supported by the RAMvader library and their respective
+               sizes. Notice, though, that the IntPtr type IS supported by the library but is not listed in this Dictionary,
+               because it is treated in a special way by the library, due to its variant-size nature.
+            </summary>
+        </member>
+        <member name="F:RAMvader.RAMvaderTarget.m_process">
+            <summary>The Process to which this instance is currently attached.</summary>
+        </member>
+        <member name="F:RAMvader.RAMvaderTarget.m_targetProcessHandle">
+            <summary>The low-level Handle to the target process we are attached to.</summary>
+        </member>
+        <member name="F:RAMvader.RAMvaderTarget.m_targetProcessEndianness">
+            <summary>The current endianness that the <see cref="T:RAMvader.RAMvaderTarget"/> is operating on. The default is
+            for RAMvader to assume the target process runs in the same endianness as the process that
+            is running RAMvader.</summary>
+        </member>
+        <member name="F:RAMvader.RAMvaderTarget.m_targetPointerSize">
+            <summary>Keeps the pointer size of the target process. Default configuration is to use
+            the same pointer size of the process which runs RAMvader.</summary>
+        </member>
+        <member name="F:RAMvader.RAMvaderTarget.m_diffPointerSizeError">
+            <summary>Determines the type of error handling which is used when the target process runs with a
+            different pointer size configuration, as compared to the process which runs RAMvader.</summary>
+        </member>
+        <member name="P:RAMvader.RAMvaderTarget.TargetProcess">
+            <summary>
+               The Process object which this RAMvaderTarget instance is attached to.
+               The <see cref="P:RAMvader.RAMvaderTarget.TargetProcess"/> property can only be changed by calls to <see cref="M:RAMvader.RAMvaderTarget.AttachToProcess(System.Diagnostics.Process)"/>
+               or <see cref="M:RAMvader.RAMvaderTarget.DetachFromProcess"/>.
+               Backed by the <see cref="F:RAMvader.RAMvaderTarget.m_process"/> field.
+            </summary>
+        </member>
+        <member name="P:RAMvader.RAMvaderTarget.ProcessHandle">
+            <summary>
+               The handle to the Process object which this RAMvaderTarget instance is attached to.
+               The <see cref="P:RAMvader.RAMvaderTarget.ProcessHandle"/> property can only be changed by calls to <see cref="M:RAMvader.RAMvaderTarget.AttachToProcess(System.Diagnostics.Process)"/> or <see cref="M:RAMvader.RAMvaderTarget.DetachFromProcess"/>.
+               Backed by the <see cref="F:RAMvader.RAMvaderTarget.m_targetProcessHandle"/> field.
+            </summary>
+        </member>
+        <member name="P:RAMvader.RAMvaderTarget.Attached">
+            <summary>
+               A flag specifying if this instance is currently attached to a target process.
+               Returns the same result as the <see cref="M:RAMvader.RAMvaderTarget.IsAttached"/> method.
+            </summary>
+        </member>
+        <member name="P:RAMvader.RAMvaderTarget.TargetProcessEndianness">
+            <summary>
+               The endianness configured for the target process.
+               This property can also be accessed through the methods <see cref="M:RAMvader.RAMvaderTarget.SetTargetEndianness(RAMvader.EEndianness)"/>
+               and <see cref="M:RAMvader.RAMvaderTarget.GetTargetEndianness"/>.
+               Backed by the <see cref="F:RAMvader.RAMvaderTarget.m_targetProcessEndianness"/> field.
+            </summary>
+        </member>
+        <member name="P:RAMvader.RAMvaderTarget.ActualTargetProcessEndianness">
+            <summary>
+               The actual endianness that the <see cref="T:RAMvader.RAMvaderTarget"/> instance is currently assuming that
+               the target process is using. This is the same value returned by
+               the <see cref="M:RAMvader.RAMvaderTarget.GetActualTargetEndianness"/> method - see its description for more details.
+            </summary>
+        </member>
+        <member name="P:RAMvader.RAMvaderTarget.TargetPointerSize">
+            <summary>
+               The pointer size configured for the target process.
+               This property can also be accessed through the methods <see cref="M:RAMvader.RAMvaderTarget.SetTargetPointerSize(RAMvader.EPointerSize)"/>
+               and <see cref="M:RAMvader.RAMvaderTarget.GetTargetPointerSize"/>.
+               Backed by the <see cref="F:RAMvader.RAMvaderTarget.m_targetPointerSize"/> field.
+            </summary>
+        </member>
+        <member name="P:RAMvader.RAMvaderTarget.ActualTargetPointerSize">
+            <summary>
+               The actual pointer size that the <see cref="T:RAMvader.RAMvaderTarget"/> instance is currently assuming that
+               the target process is using. This is the same value returned by
+               the <see cref="M:RAMvader.RAMvaderTarget.GetActualTargetPointerSize"/> method - see its description for more details.
+            </summary>
+        </member>
+        <member name="P:RAMvader.RAMvaderTarget.PointerSizeErrorHandling">
+            <summary>
+               The type of error handling which is used when the target process runs with a different
+               pointer size configuration, as compared to the process which runs RAMvader.
+               This property can also be accessed through the methods <see cref="M:RAMvader.RAMvaderTarget.SetTargetPointerSizeErrorHandling(RAMvader.EDifferentPointerSizeError)"/>
+               and <see cref="M:RAMvader.RAMvaderTarget.GetTargetPointerSizeErrorHandling"/>.
+               Backed by the <see cref="F:RAMvader.RAMvaderTarget.m_diffPointerSizeError"/> field.
+            </summary>
+        </member>
+        <member name="T:RAMvader.RAMvaderTarget.AttachedEventHandler">
+            <summary>Delegate used for handling the event which is fired when the <see cref="T:RAMvader.RAMvaderTarget"/> object is attached to a process.</summary>
+            <param name="sender">The object that sent the event.</param>
+            <param name="args">The arguments (data) of the event.</param>
+        </member>
+        <member name="T:RAMvader.RAMvaderTarget.DetachedEventHandler">
+            <summary>Delegate used for handling the event which is fired when the <see cref="T:RAMvader.RAMvaderTarget"/> object is detached from a process.</summary>
+            <param name="sender">The object that sent the event.</param>
+            <param name="args">The arguments (data) of the event.</param>
+        </member>
+        <member name="E:RAMvader.RAMvaderTarget.AttachedEvent">
+            <summary>Handles the event that gets fired when the <see cref="T:RAMvader.RAMvaderTarget"/> gets attached to a process.</summary>
+        </member>
+        <member name="E:RAMvader.RAMvaderTarget.DetachedEvent">
+            <summary>Handles the event that gets fired when the <see cref="T:RAMvader.RAMvaderTarget"/> gets detached from a process.</summary>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.GetRAMvaderPointerSize">
+            <summary>Retrieves the pointer size for the process which runs RAMvader.</summary>
+            <returns>Returns a <see cref="T:RAMvader.EPointerSize"/> value, specifying the pointer size of the process.</returns>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.GetValueAsBytesArray(System.Object,RAMvader.EEndianness,RAMvader.EPointerSize,RAMvader.EDifferentPointerSizeError)">
+            <summary>Utility method for retrieving a given value as an array of bytes, respecting the specified endianness.</summary>
+            <param name="value">The value to be retrieved as a sequence of bytes.</param>
+            <param name="endianness">The endianness to be used when retrieving the sequence of bytes.</param>
+            <param name="pointerSize">
+               The size of pointer to be used when retrieving the sequence of bytes.
+               That parameter is only used when retrieving the bytes representation of IntPtr values.
+            </param>
+            <param name="diffPointerSizeError">
+               The policy for handling errors regarding different sizes of pointers between RAMvader process'
+               pointers and the pointers size defined by the "pointerSize" parameter. That parameter is only used when retrieving the
+               bytes representation of IntPtr values.
+            </param>
+            <returns>Returns a sequence of bytes representing the value in the given endianness (and pointer sizes, if applicable).</returns>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.RevertArrayOnEndiannessDifference(System.Byte[],RAMvader.EEndianness)">
+            <summary>Reverts the given array of bytes, if the specified endianness is different from the endianness
+            used by the process which runs RAMvader.</summary>
+            <param name="bytesArray">The array to be set to the target process' endianness.</param>
+            <param name="endianness">The endianness to compare agains the RAMvader process' endianness.</param>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.#ctor">
+            <summary>Constructor.</summary>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.Finalize">
+            <summary>Destructor.</summary>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.SetTargetEndianness(RAMvader.EEndianness)">
+            <summary>
+               Makes the <see cref="T:RAMvader.RAMvaderTarget"/> instance assume that the target process is using a specific endianness to store its
+               values. The default endianness assumed by a <see cref="T:RAMvader.RAMvaderTarget"/> instance is the same endianness as the process that is
+               running RAMvader.
+            </summary>
+            <param name="endianness">The new endianness to be assumed as the target process' endianness.</param>
+            <seealso cref="M:RAMvader.RAMvaderTarget.GetTargetEndianness"/>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.GetTargetEndianness">
+            <summary>Retrieves the endianness that the <see cref="T:RAMvader.RAMvaderTarget"/> instance is currently assuming that the target process is using.</summary>
+            <returns>Returns the (assumed) target process' endianness.</returns>
+            <seealso cref="M:RAMvader.RAMvaderTarget.SetTargetEndianness(RAMvader.EEndianness)"/>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.GetActualTargetEndianness">
+            <summary>
+               Retrieves the actual endianness that the <see cref="T:RAMvader.RAMvaderTarget"/> instance is currently assuming that the target process is using.
+               This method converts the <see cref="F:RAMvader.EEndianness.evEndiannessDefault"/> value into either <see cref="F:RAMvader.EEndianness.evEndiannessBig"/> or
+               <see cref="F:RAMvader.EEndianness.evEndiannessLittle"/>.
+            </summary>
+            <returns>Returns the (assumed) target process' endianness.</returns>
+            <seealso cref="M:RAMvader.RAMvaderTarget.SetTargetEndianness(RAMvader.EEndianness)"/>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.SetTargetPointerSize(RAMvader.EPointerSize)">
+            <summary>
+               Makes the <see cref="T:RAMvader.RAMvaderTarget"/> instance assume that the target process is using a specific pointer size (32 or 64 bits)
+               configuration. The default pointer size assumed by a <see cref="T:RAMvader.RAMvaderTarget"/> instance is the same pointer size as the process
+               that is running RAMvader.
+            </summary>
+            <param name="pointerSize">The new pointer size to be assumed for the target process.</param>
+            <seealso cref="M:RAMvader.RAMvaderTarget.GetTargetPointerSize"/>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.GetTargetPointerSize">
+            <summary>Retrieves the pointer size that the <see cref="T:RAMvader.RAMvaderTarget"/> instance is currently assuming
+            that the target process is using.</summary>
+            <returns>Returns the (assumed) target process' pointer size.</returns>
+            <seealso cref="M:RAMvader.RAMvaderTarget.SetTargetPointerSize(RAMvader.EPointerSize)"/>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.GetActualTargetPointerSize">
+            <summary>
+               Retrieves the actual pointer size that the <see cref="T:RAMvader.RAMvaderTarget"/> instance is currently assuming that the target process is using.
+               This method converts the <see cref="F:RAMvader.EPointerSize.evPointerSizeDefault"/> value into either <see cref="F:RAMvader.EPointerSize.evPointerSize32"/>
+               or <see cref="F:RAMvader.EPointerSize.evPointerSize64"/>.
+            </summary>
+            <returns>Returns the (assumed) target process' pointer size.</returns>
+            <seealso cref="M:RAMvader.RAMvaderTarget.SetTargetPointerSize(RAMvader.EPointerSize)"/>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.SetTargetPointerSizeErrorHandling(RAMvader.EDifferentPointerSizeError)">
+            <summary>Defines how to handle errors related to different pointer sizes between the target process and the process which runs the RAMvader library.</summary>
+            <param name="pointerSizeErrorHandling">How different pointer-size-related errors are to be handled.</param>
+            <seealso cref="M:RAMvader.RAMvaderTarget.GetTargetPointerSizeErrorHandling"/>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.GetTargetPointerSizeErrorHandling">
+            <summary>Retrieves the pointer size that the <see cref="T:RAMvader.RAMvaderTarget"/> instance is currently assuming that the target process is using.</summary>
+            <returns>Returns the (assumed) target process' pointer size.</returns>
+            <seealso cref="M:RAMvader.RAMvaderTarget.SetTargetPointerSizeErrorHandling(RAMvader.EDifferentPointerSizeError)"/>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.RevertArrayOnEndiannessDifference(System.Byte[])">
+            <summary>
+               Reverts the given array of bytes, if the target process' endianness is different
+               from the endianness used by the process which runs RAMvader.
+               The target process' endianness can be configured through the <see cref="M:RAMvader.RAMvaderTarget.SetTargetEndianness(RAMvader.EEndianness)"/> method.
+            </summary>
+            <param name="bytesArray">The array to be set to the target process' endianness.</param>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.AttachToProcess(System.Diagnostics.Process)">
+            <summary>Sets the target Process to which the instance needs to be attached.</summary>
+            <param name="targetProcess">The target process.</param>
+            <returns>Returns true in case of success, false in case of failure.</returns>
+            <exception cref="T:RAMvader.InstanceAlreadyAttachedException">
+               Indicates there is a Process currently attached to that <see cref="T:RAMvader.RAMvaderTarget"/> object. You must detach the
+               instance from the Process by calling <see cref="M:RAMvader.RAMvaderTarget.DetachFromProcess"/> before trying to attach to another Process.
+            </exception>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.DetachFromProcess">
+            <summary>Detaches this instance from its target process.</summary>
+            <returns>
+               Returns true if the instance detached successfully.
+               Returns false if something went wrong when detaching from the target process.
+            </returns>
+            <exception cref="T:RAMvader.InstanceNotAttachedException">Indicates this instance of the <see cref="T:RAMvader.RAMvaderTarget"/> class is currently not attached to any Process.</exception>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.GetAttachedProcess">
+            <summary>Retrieves the Process to which this instance is attached.</summary>
+            <returns>
+               Returns a Process object, indicating the process to which this instance is attached.
+               If the instance is not attached to any process, this method returns null.
+            </returns>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.IsAttached">
+            <summary>
+               Verify if the <see cref="T:RAMvader.RAMvaderTarget"/> is currently attached to any Process.
+               This is just a shorthand method for checking if <see cref="M:RAMvader.RAMvaderTarget.GetAttachedProcess"/> returns a null value.
+            </summary>
+            <returns>Returns a flag indicating if the <see cref="T:RAMvader.RAMvaderTarget"/> instance is currently attached to any process.</returns>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.GetValueAsBytesArrayInTargetProcess(System.Object)">
+            <summary>
+               Retrives a byte array representing the given numeric value as it would appear into
+               the target process' memory space (considering its endianness).
+            </summary>
+            <param name="objVal">
+               An Object representing the value to be converted to its (endianness correct) bytes array representation.
+               This object should be one of the basic data types supported by the RAMvader library.
+            </param>
+            <returns>
+               Returns an array of bytes representing the given value as it would be stored into the target process' memory,
+               considering the target process' endianness configurations.
+            </returns>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.WriteToTarget(System.IntPtr,System.Byte[])">
+            <summary>
+               Writes a Byte Array into the target process' memory.
+               All other writing methods convert their corresponding input data to a byte sequence
+               and then call this method to execute the actual writing operation.
+            </summary>
+            <param name="address">The address on the target process' memory where the data is to be written.</param>
+            <param name="writeData">The data to be written to the target process.</param>
+            <returns>Returns true in case of success, false in case of failure.</returns>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.WriteToTarget(System.IntPtr,System.Object)">
+            <summary>Writes a value into the target process' memory.</summary>
+            <param name="address">The address on the target process' memory where the data is to be written.</param>
+            <param name="writeData">
+               The data to be written to the target process.
+               This data must be one of the basic data types supported by the RAMvader library.
+            </param>
+            <returns>Returns true in case of success, false in case of failure.</returns>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.ReadFromTarget(System.IntPtr,System.Byte[])">
+            <summary>
+               Reads a sequence of bytes from the target process' memory, filling the given output
+               array with the read bytes. All other reading methods call this method to read the desired
+               data from the target process, and convert the returned bytes into the target data type.
+            </summary>
+            <param name="address">The address on the target process' memory where the data will be read from.</param>
+            <param name="outDestiny">
+               The destiny buffer, where the read data will be copied to. The number of elements in the passed
+               array determines the number of bytes that will be read from the target process.
+            </param>
+            <returns>Returns true in case of success, false in case of failure.</returns>
+        </member>
+        <member name="M:RAMvader.RAMvaderTarget.ReadFromTarget(System.IntPtr,System.Object@)">
+            <summary>Reads a value from the target process' memory.</summary>
+            <param name="address">The address on the target process' memory where the data will be read from.</param>
+            <param name="outDestiny">
+               The result of the reading will be stored in this variable.
+               The referenced variable's data must be one of the basic data types supported by the RAMvader library.
+            </param>
+            <returns>Returns true in case of success, false in case of failure.</returns>
+        </member>
+        <member name="T:RAMvader.UnsupportedDataTypeException">
+            <summary>
+               An exception which is thrown when the user tries to perform a read or write operation using
+               a data type that is not supported by the library.
+            </summary>
+        </member>
+        <member name="M:RAMvader.UnsupportedDataTypeException.#ctor(System.Type)">
+            <summary>Constructor.</summary>
+            <param name="dataType">The data type for which RAMvader does not offer support to.</param>
+        </member>
+        <member name="T:RAMvader.UnsupportedPointerSizeException">
+            <summary>An exception which is thrown when the user tries to attach a 32-bits process to a 64-bits target process.</summary>
+        </member>
+        <member name="M:RAMvader.UnsupportedPointerSizeException.#ctor">
+            <summary>Constructor.</summary>
+        </member>
+        <member name="T:RAMvader.WinAPI">
+            <summary>This class is an interface that provides access to the Windows API.</summary>
+        </member>
+        <member name="T:RAMvader.WinAPI.ProcessAccessFlags">
+            <summary>Flags used to determine the allowed access to a process.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.ProcessAccessFlags.All">
+            <summary>Identifies the "PROCESS_ALL_ACCESS" process access right from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.ProcessAccessFlags.Terminate">
+            <summary>Identifies the "PROCESS_TERMINATE" process access right from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.ProcessAccessFlags.CreateThread">
+            <summary>Identifies the "PROCESS_CREATE_THREAD" process access right from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.ProcessAccessFlags.VMOperation">
+            <summary>Identifies the "PROCESS_VM_OPERATION" process access right from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.ProcessAccessFlags.VMRead">
+            <summary>Identifies the "PROCESS_VM_READ" process access right from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.ProcessAccessFlags.VMWrite">
+            <summary>Identifies the "PROCESS_VM_WRITE" process access right from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.ProcessAccessFlags.DupHandle">
+            <summary>Identifies the "PROCESS_DUP_HANDLE" process access right from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.ProcessAccessFlags.SetInformation">
+            <summary>Identifies the "PROCESS_SET_INFORMATION" process access right from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.ProcessAccessFlags.QueryInformation">
+            <summary>Identifies the "PROCESS_QUERY_INFORMATION" process access right from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.ProcessAccessFlags.Synchronize">
+            <summary>Identifies the "SYNCHRONIZE" process access right from the Windows API.</summary>
+        </member>
+        <member name="T:RAMvader.WinAPI.AllocationType">
+            <summary>Flags used for determining the type of memory allocation in the function VirtualAllocEx.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.AllocationType.Commit">
+            <summary>Identifies the "MEM_COMMIT" memory allocation type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.AllocationType.Reserve">
+            <summary>Identifies the "MEM_RESERVE" memory allocation type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.AllocationType.Decommit">
+            <summary>Identifies the "MEM_DECOMMIT" memory freeing type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.AllocationType.Release">
+            <summary>Identifies the "MEM_RELEASE" memory freeing type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.AllocationType.Reset">
+            <summary>Identifies the "MEM_RESET" memory allocation type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.AllocationType.Physical">
+            <summary>Identifies the "MEM_PHYSICAL" memory allocation type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.AllocationType.TopDown">
+            <summary>Identifies the "MEM_TOP_DOWN" memory allocation type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.AllocationType.WriteWatch">
+            <summary>Identifies the "MEM_WRITE_WATCH" memory allocation type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.AllocationType.LargePages">
+            <summary>Identifies the "MEM_LARGE_PAGES" memory allocation type from the Windows API.</summary>
+        </member>
+        <member name="T:RAMvader.WinAPI.MemoryProtection">
+            <summary>Flags determining the type of memory protection for a region of allocated pages.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.MemoryProtection.Execute">
+            <summary>Identifies the "PAGE_EXECUTE" page protection type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.MemoryProtection.ExecuteRead">
+            <summary>Identifies the "PAGE_EXECUTE_READ" page protection type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.MemoryProtection.ExecuteReadWrite">
+            <summary>Identifies the "PAGE_EXECUTE_READWRITE" page protection type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.MemoryProtection.ExecuteWriteCopy">
+            <summary>Identifies the "PAGE_EXECUTE_WRITECOPY" page protection type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.MemoryProtection.NoAccess">
+            <summary>Identifies the "PAGE_NOACCESS" page protection type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.MemoryProtection.ReadOnly">
+            <summary>Identifies the "PAGE_READONLY" page protection type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.MemoryProtection.ReadWrite">
+            <summary>Identifies the "PAGE_READWRITE" page protection type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.MemoryProtection.WriteCopy">
+            <summary>Identifies the "PAGE_WRITECOPY" page protection type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.MemoryProtection.GuardModifierflag">
+            <summary>Identifies the "PAGE_GUARD" page protection type modifier from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.MemoryProtection.NoCacheModifierflag">
+            <summary>Identifies the "PAGE_NOCACHE" page protection type modifier from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.MemoryProtection.WriteCombineModifierflag">
+            <summary>Identifies the "PAGE_WRITECOMBINE" page protection type modifier from the Windows API.</summary>
+        </member>
+        <member name="T:RAMvader.WinAPI.FreeType">
+            <summary>Flags used for freeing allocated memory, through the VirtualFreeEx function.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.FreeType.Decommit">
+            <summary>Identifies the "MEM_DECOMMIT" memory region freeing type from the Windows API.</summary>
+        </member>
+        <member name="F:RAMvader.WinAPI.FreeType.Release">
+            <summary>Identifies the "MEM_RELEASE" memory region freeing type from the Windows API.</summary>
+        </member>
+        <member name="M:RAMvader.WinAPI.OpenProcess(RAMvader.WinAPI.ProcessAccessFlags,System.Boolean,System.Int32)">
+            <summary>Kernel32: OpenProcess function.</summary>
+        </member>
+        <member name="M:RAMvader.WinAPI.CloseHandle(System.IntPtr)">
+            <summary>Kernel32: CloseHandle function.</summary>
+        </member>
+        <member name="M:RAMvader.WinAPI.VirtualAllocEx(System.IntPtr,System.IntPtr,System.UInt32,RAMvader.WinAPI.AllocationType,RAMvader.WinAPI.MemoryProtection)">
+            <summary>Kernel32: VirtualAllocEx function.</summary>
+        </member>
+        <member name="M:RAMvader.WinAPI.VirtualFreeEx(System.IntPtr,System.IntPtr,System.Int32,RAMvader.WinAPI.FreeType)">
+            <summary>Kernel32: VirtualFreeEx function.</summary>
+        </member>
+        <member name="M:RAMvader.WinAPI.WriteProcessMemory(System.IntPtr,System.IntPtr,System.Byte[],System.Int32,System.IntPtr@)">
+            <summary>Kernel32: WriteProcessMemory function.</summary>
+        </member>
+        <member name="M:RAMvader.WinAPI.ReadProcessMemory(System.IntPtr,System.IntPtr,System.Byte[],System.Int32,System.IntPtr@)">
+            <summary>Kernel32: ReadProcessMemory function.</summary>
+        </member>
+    </members>
+</doc>
