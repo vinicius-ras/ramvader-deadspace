@@ -117,11 +117,35 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="strChkCheatDescriptionExample" xml:space="preserve">
-    <value>example cheat's description!</value>
+  <data name="strChkCheatDescriptionInfiniteAmmo" xml:space="preserve">
+    <value>get unlimited ammunition for all weapons, and never need to reload any weapon again.</value>
   </data>
-  <data name="strChkCheatPromptExample" xml:space="preserve">
-    <value>Example cheat:</value>
+  <data name="strChkCheatDescriptionInfiniteCredits" xml:space="preserve">
+    <value>unlimited money for buying stuff!</value>
+  </data>
+  <data name="strChkCheatDescriptionInfiniteHP" xml:space="preserve">
+    <value>your heath never decreases.</value>
+  </data>
+  <data name="strChkCheatDescriptionInfinitePowerNodes" xml:space="preserve">
+    <value>get unlimited power nodes to upgrade your weapons and gear!</value>
+  </data>
+  <data name="strChkCheatDescriptionInfiniteStasis" xml:space="preserve">
+    <value>use your stasis module unlimitedly.</value>
+  </data>
+  <data name="strChkCheatPromptInfiniteAmmo" xml:space="preserve">
+    <value>Infinite Ammo + No Reload:</value>
+  </data>
+  <data name="strChkCheatPromptInfiniteCredits" xml:space="preserve">
+    <value>Infinite Credits:</value>
+  </data>
+  <data name="strChkCheatPromptInfiniteHP" xml:space="preserve">
+    <value>Infinite HP:</value>
+  </data>
+  <data name="strChkCheatPromptInfinitePowerNodes" xml:space="preserve">
+    <value>Infinite Power Nodes:</value>
+  </data>
+  <data name="strChkCheatPromptInfiniteStasis" xml:space="preserve">
+    <value>Infinite Stasis:</value>
   </data>
   <data name="strGroupBoxHeaderCheats" xml:space="preserve">
     <value>Available hacks</value>
