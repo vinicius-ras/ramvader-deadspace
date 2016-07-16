@@ -26,8 +26,16 @@ namespace TrainerApp
 	/// <summary>Identifiers for all cheats available in the trainer.</summary>
 	public enum ECheat
 	{
-		/// <summary>Identifier for the "example" cheat.</summary>
-		evCheatExample,
+		/// <summary>Identifier for the "Infinite HP" cheat.</summary>
+		evCheatInfiniteHP,
+		/// <summary>Identifier for the "Infinite Ammo" cheat.</summary>
+		evCheatInfiniteAmmo,
+		/// <summary>Identifier for the "Infinite Credits" cheat.</summary>
+		evCheatInfiniteCredits,
+		/// <summary>Identifier for the "Infinite Stasis" cheat.</summary>
+		evCheatInfiniteStasis,
+		/// <summary>Identifier for the "Infinite Power Nodes" cheat.</summary>
+		evCheatInfinitePowerNodes,
 	}
 
 
@@ -38,9 +46,6 @@ namespace TrainerApp
 	/// once the trainer gets attached to the game.</summary>
 	public enum ECodeCave
 	{
-		/// <summary>Identifier for the "example" code cave.</summary>
-		[CodeCaveDefinition( 0x50, 0x31, 0xC0, 0x89, 0x05, EVariable.evVarExample, 0x58, 0xC3 )]
-		evCodeCaveExample,
 	}
 
 
@@ -51,8 +56,5 @@ namespace TrainerApp
 	/// once the trainer gets attached to the game.</summary>
 	public enum EVariable
 	{
-		/// <summary>Identifies an example of variable.</summary>
-		[VariableDefinition( (UInt32) 123 )]
-		evVarExample,
 	}
 }

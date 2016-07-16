@@ -98,8 +98,24 @@
 					</Style>
 				</StackPanel.Resources>
 				<StackPanel Orientation="Horizontal">
-					<CheckBox Checked="CheckBoxCheatToggled" Unchecked="CheckBoxCheatToggled" Content="{x:Static props:Resources.strChkCheatPromptExample}" Tag="{x:Static local:ECheat.evCheatExample}" />
-					<Label Content="{x:Static props:Resources.strChkCheatDescriptionExample}" Margin="3" />
+					<CheckBox Checked="CheckBoxCheatToggled" Unchecked="CheckBoxCheatToggled" Content="{x:Static props:Resources.strChkCheatPromptInfiniteHP}" Tag="{x:Static local:ECheat.evCheatInfiniteHP}" />
+					<Label Content="{x:Static props:Resources.strChkCheatDescriptionInfiniteHP}" Margin="3" />
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox Checked="CheckBoxCheatToggled" Unchecked="CheckBoxCheatToggled" Content="{x:Static props:Resources.strChkCheatPromptInfiniteAmmo}" Tag="{x:Static local:ECheat.evCheatInfiniteAmmo}" />
+					<Label Content="{x:Static props:Resources.strChkCheatDescriptionInfiniteAmmo}" Margin="3" />
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox Checked="CheckBoxCheatToggled" Unchecked="CheckBoxCheatToggled" Content="{x:Static props:Resources.strChkCheatPromptInfiniteCredits}" Tag="{x:Static local:ECheat.evCheatInfiniteCredits}" />
+					<Label Content="{x:Static props:Resources.strChkCheatDescriptionInfiniteCredits}" Margin="3" />
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox Checked="CheckBoxCheatToggled" Unchecked="CheckBoxCheatToggled" Content="{x:Static props:Resources.strChkCheatPromptInfiniteStasis}" Tag="{x:Static local:ECheat.evCheatInfiniteStasis}" />
+					<Label Content="{x:Static props:Resources.strChkCheatDescriptionInfiniteStasis}" Margin="3" />
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox Checked="CheckBoxCheatToggled" Unchecked="CheckBoxCheatToggled" Content="{x:Static props:Resources.strChkCheatPromptInfinitePowerNodes}" Tag="{x:Static local:ECheat.evCheatInfinitePowerNodes}" />
+					<Label Content="{x:Static props:Resources.strChkCheatDescriptionInfinitePowerNodes}" Margin="3" />
 				</StackPanel>
 			</StackPanel>
 		</GroupBox>
