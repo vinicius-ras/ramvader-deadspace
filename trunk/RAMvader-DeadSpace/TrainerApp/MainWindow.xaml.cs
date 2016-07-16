@@ -104,16 +104,16 @@ namespace TrainerApp
 		/// <param name="mainModuleAddress">The base address of the game's process' main module.</param>
 		private void RegisterMemoryAlterationSets( IntPtr mainModuleAddress )
 		{
-			// THIS METHOD IS CALLED AFTER THE INJECTION OF CODE/VARIABLES INTO THE GAME PROCESS' MEMORY SPACE.
-			// WRITE THE CODE WHICH REGISTER MEMORY ALTERATION SETS HERE.
+			GameMemoryInjector.AddMemoryAlteration( ECheat.evCheatInfiniteHP, new MemoryAlterationX86Call( GameMemoryIO, mainModuleAddress + 0x126169, ECodeCave.evCodeCaveInfiniteHP, 7 ) );
+			GameMemoryInjector.AddMemoryAlteration( ECheat.evCheatInfiniteAmmo, new MemoryAlterationX86Call( GameMemoryIO, mainModuleAddress + 0xF8521, ECodeCave.evCodeCaveInfiniteAmmo, 6 ) );
+			GameMemoryInjector.AddMemoryAlteration( ECheat.evCheatInfiniteStasis, new MemoryAlterationX86Call( GameMemoryIO, mainModuleAddress + 0x146354, ECodeCave.evCodeCaveInfiniteStasis, 8 ) );
+			GameMemoryInjector.AddMemoryAlteration( ECheat.evCheatInfinitePowerNodes, new MemoryAlterationX86Call( GameMemoryIO, mainModuleAddress + 0x120840, ECodeCave.evCodeCaveInfinitePowerNodes, 6 ) );
 		}
 
 
 		/// <summary>Disables any Memory Alteration that is "always active" while the trainer is attached to the game.</summary>
 		private void DisableManuallyActivatedMemoryAlterations()
 		{
-			// THIS METHOD IS CALLED WHEN THE TRAINER GETS DETACHED FROM THE GAME'S PROCESS.
-			// WRITE THE CODE WHICH DISABLES ANY MEMORY ALTERATION THAT HAS BEEN MANUALLY ENABLED HERE.
 		}
 
 
