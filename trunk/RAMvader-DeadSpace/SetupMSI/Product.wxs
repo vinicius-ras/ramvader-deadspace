@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright (C) 2016 Vinicius Rogério Araujo Silva
+ -
+ - This file is part of RAMvader-DeadSpace.
+ - 
+ - RAMvader-DeadSpace is free software: you can redistribute it and/or modify
+ - it under the terms of the GNU General Public License as published by
+ - the Free Software Foundation, either version 3 of the License, or
+ - (at your option) any later version.
+ - 
+ - RAMvader-DeadSpace is distributed in the hope that it will be useful,
+ - but WITHOUT ANY WARRANTY; without even the implied warranty of
+ - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ - GNU General Public License for more details.
+ - 
+ - You should have received a copy of the GNU General Public License
+ - along with RAMvader-DeadSpace. If not, see <http://www.gnu.org/licenses/>.
+ -->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<!-- This file will be generating the MSI file which installs RAMvader-DeadSpace into the user's machine. -->
+	<Product Id="F792BE50-DEBA-4D6F-ACC4-958DE628B65A" UpgradeCode="5DBC228A-1F8B-4BEE-82F0-65B945704133"
+			 Name="RAMvader-DeadSpace Trainer" Manufacturer="Vinicius Rogério Araujo Silva" Language="1033" Codepage="1252"
+			 Version="1.0.0">
+		<!-- Package, upgrade and downgrade information. -->
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"
+				 Keywords="Installer"
+				 Manufacturer="Vinicius Rogério Araujo Silva" Languages="1033" SummaryCodepage="1252"
+				 Description="RAMvader-DeadSpace is a trainer by Vinicius.RAS for the game DeadSpace." />
+
+		<MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="A newer version of RAMvader-DeadSpace is already installed." />
+
+		<!-- Configure media where the files will be stored. -->
+		<Media Id="1" Cabinet="SetupFiles.cab" EmbedCab="yes" />
+
+		<!-- Add the icon(s) we'll be using... -->
+		<Icon Id="ProjectIcon" SourceFile="$(var.TrainerApp.ProjectDir)media\icon.ico" />
+
+		<!-- Configure app's icon to appear in Windows' "Add/Remove Programs" -->
+		<Property Id="ARPPRODUCTICON" Value="ProjectIcon" />
+
+		<!-- Configure the files and directories that will be installed. -->
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<!-- Files to be installed at Program Files (x86). -->
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="APPLICATIONROOTDIRECTORY" Name="RAMvader-DeadSpace">
+					<Component Id="RAMvaderTrainer.exe" Guid="9EC2DF06-CB1D-486A-87B6-816E61402091">
+						<File Id="RAMvaderTrainer.exe" Source="$(var.TrainerApp.TargetPath)" Checksum="yes" />
+					</Component>
+
+					<Component Id="RAMvader.dll" Guid="DDB83C9D-98D9-46F3-BDA8-D610D4877BBC">
+						<File Source="$(var.TrainerApp.TargetDir)RAMvader.dll" Checksum="yes" />
+					</Component>
+				</Directory>
+			</Directory>
+
+			<!-- Directory table entries to create shortcuts on the Program Menu folder (Windows' "Start menu") -->
+			<Directory Id="ProgramMenuFolder">
+				<Component Id="ProgramMenuAppShortcut" Guid="508A8586-8636-43C8-A4AA-8818955F3464">
+					<!-- Shortcut to run the trainer from the Program Menu. -->
+					<Shortcut Id="TrainerProgramMenuShortcut" Target="[#RAMvaderTrainer.exe]"
+							  Name="RAMvader-DeadSpace Trainer" Description="Runs RAMvader-DeadSpace: a trainer for the game DeadSpace." />
+
+					<!-- Allows removal of shortcuts when the trainer gets uninstalled. -->
+					<RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+				</Component>
+			</Directory>
+		</Directory>
+
+		<!-- Finally, make the feature available for installation. -->
+		<Feature Id="TrainerMainFiles" Level="1"
+				 Absent="disallow" AllowAdvertise="no"
+				 ConfigurableDirectory="APPLICATIONROOTDIRECTORY"
+				 Title="RAMvader-DeadSpace's main files" Description="Main files which allow the RAMvader-DeadSpace trainer to be executed."
+				 Display="expand">
+			<ComponentRef Id="RAMvaderTrainer.exe" />
+			<ComponentRef Id="ProgramMenuAppShortcut" />
+			<ComponentRef Id="RAMvader.dll" />
+		</Feature>
+
+		<!-- Configure the installer's User Interface. -->
+		<UIRef Id="WixUI_InstallDir" />
+		<UIRef Id="WixUI_ErrorProgressText" />
+		<Property Id="WIXUI_INSTALLDIR" Value="APPLICATIONROOTDIRECTORY" />
+
+		<WixVariable Id="WixUILicenseRtf" Value="$(var.TrainerApp.ProjectDir)docs\License.rtf" />
+
+	</Product>
+</Wix>
