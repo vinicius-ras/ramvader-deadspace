@@ -36,6 +36,8 @@ namespace TrainerApp
 		evCheatInfiniteStasis,
 		/// <summary>Identifier for the "Infinite Power Nodes" cheat.</summary>
 		evCheatInfinitePowerNodes,
+		/// <summary>Identifier for the "Unlimited Oxygen" cheat.</summary>
+		evCheatUnlimitedOxygen,
 	}
 
 
