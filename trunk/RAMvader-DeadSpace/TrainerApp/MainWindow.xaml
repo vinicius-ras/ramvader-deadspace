@@ -117,6 +117,10 @@
 					<CheckBox Checked="CheckBoxCheatToggled" Unchecked="CheckBoxCheatToggled" Content="{x:Static props:Resources.strChkCheatPromptInfinitePowerNodes}" Tag="{x:Static local:ECheat.evCheatInfinitePowerNodes}" />
 					<Label Content="{x:Static props:Resources.strChkCheatDescriptionInfinitePowerNodes}" Margin="3" />
 				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox Checked="CheckBoxCheatToggled" Unchecked="CheckBoxCheatToggled" Content="{x:Static props:Resources.strChkCheatPromptUnlimitedOxygen}" Tag="{x:Static local:ECheat.evCheatUnlimitedOxygen}" />
+					<Label Content="{x:Static props:Resources.strChkCheatDescriptionUnlimitedOxygen}" Margin="3" />
+				</StackPanel>
 			</StackPanel>
 		</GroupBox>
 		<GroupBox Header="{x:Static props:Resources.strGroupBoxHeaderSupport}" Margin="3" FontWeight="Bold">

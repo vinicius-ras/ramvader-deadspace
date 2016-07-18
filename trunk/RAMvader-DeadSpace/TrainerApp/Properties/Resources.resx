@@ -132,6 +132,9 @@
   <data name="strChkCheatDescriptionInfiniteStasis" xml:space="preserve">
     <value>use your stasis module unlimitedly.</value>
   </data>
+  <data name="strChkCheatDescriptionUnlimitedOxygen" xml:space="preserve">
+    <value>prevents your RIG's oxygen from being depleted.</value>
+  </data>
   <data name="strChkCheatPromptInfiniteAmmo" xml:space="preserve">
     <value>Infinite Ammo + No Reload:</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="strChkCheatPromptInfiniteStasis" xml:space="preserve">
     <value>Infinite Stasis:</value>
+  </data>
+  <data name="strChkCheatPromptUnlimitedOxygen" xml:space="preserve">
+    <value>Unlimited Oxygen:</value>
   </data>
   <data name="strGroupBoxHeaderCheats" xml:space="preserve">
     <value>Available hacks</value>

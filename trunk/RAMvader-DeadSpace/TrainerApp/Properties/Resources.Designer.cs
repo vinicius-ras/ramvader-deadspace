@@ -106,6 +106,15 @@ namespace TrainerApp.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to prevents your RIG&apos;s oxygen from being depleted..
+        /// </summary>
+        public static string strChkCheatDescriptionUnlimitedOxygen {
+            get {
+                return ResourceManager.GetString("strChkCheatDescriptionUnlimitedOxygen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Infinite Ammo + No Reload:.
         /// </summary>
         public static string strChkCheatPromptInfiniteAmmo {
@@ -147,6 +156,15 @@ namespace TrainerApp.Properties {
         public static string strChkCheatPromptInfiniteStasis {
             get {
                 return ResourceManager.GetString("strChkCheatPromptInfiniteStasis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unlimited Oxygen:.
+        /// </summary>
+        public static string strChkCheatPromptUnlimitedOxygen {
+            get {
+                return ResourceManager.GetString("strChkCheatPromptUnlimitedOxygen", resourceCulture);
             }
         }
         
