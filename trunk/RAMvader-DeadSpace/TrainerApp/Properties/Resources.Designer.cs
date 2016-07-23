@@ -106,7 +106,7 @@ namespace TrainerApp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to when defending the ship from the asteroids (Chapter 5), the ship&apos;s hull integrity value never decreases..
+        ///   Looks up a localized string similar to when defending the ship from the asteroids (Chapter 4), the ship&apos;s hull integrity value never decreases..
         /// </summary>
         public static string strChkCheatDescriptionUnbreakableShipsHull {
             get {

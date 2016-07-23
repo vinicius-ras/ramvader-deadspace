@@ -133,7 +133,7 @@
     <value>use your stasis module unlimitedly.</value>
   </data>
   <data name="strChkCheatDescriptionUnbreakableShipsHull" xml:space="preserve">
-    <value>when defending the ship from the asteroids (Chapter 5), the ship's hull integrity value never decreases.</value>
+    <value>when defending the ship from the asteroids (Chapter 4), the ship's hull integrity value never decreases.</value>
   </data>
   <data name="strChkCheatDescriptionUnlimitedOxygen" xml:space="preserve">
     <value>prevents your RIG's oxygen from being depleted.</value>
