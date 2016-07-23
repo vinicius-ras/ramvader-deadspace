@@ -38,6 +38,8 @@ namespace TrainerApp
 		evCheatInfinitePowerNodes,
 		/// <summary>Identifier for the "Unlimited Oxygen" cheat.</summary>
 		evCheatUnlimitedOxygen,
+		/// <summary>Identifier for the "Unbreakable Ship's Hull" cheat.</summary>
+		evCheatUnbreakableShipsHull,
 	}
 
 
@@ -66,6 +68,9 @@ namespace TrainerApp
 		/// <summary>Identifier for the second code cave used for the "Infinite Credits" cheat.</summary>
 		[CodeCaveDefinition( 0x68, 0x2A, 0x2C, 0x0A, 0x00, 0x8F, 0x81, 0xE4, 0x0C, 0x00, 0x00, 0x8B, 0x81, 0xE4, 0x0C, 0x00, 0x00, 0xC3 )]
 		evCodeCaveInfiniteCredits2,
+		/// <summary>Identifier for the code cave used for the "Unbreakable Ship's Hull" cheat.</summary>
+		[CodeCaveDefinition( 0x68, 0x9A, 0x02, 0x00, 0x00, 0xDB, 0x04, 0x24, 0x83, 0xC4, 0x04, 0xD9, 0x9B, 0x94, 0x07, 0x00, 0x00, 0xC3 )]
+		evCodeCaveUnbreakableShipsHull,
 	}
 
 

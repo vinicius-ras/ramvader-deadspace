@@ -106,6 +106,15 @@ namespace TrainerApp.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to when defending the ship from the asteroids (Chapter 5), the ship&apos;s hull integrity value never decreases..
+        /// </summary>
+        public static string strChkCheatDescriptionUnbreakableShipsHull {
+            get {
+                return ResourceManager.GetString("strChkCheatDescriptionUnbreakableShipsHull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to prevents your RIG&apos;s oxygen from being depleted..
         /// </summary>
         public static string strChkCheatDescriptionUnlimitedOxygen {
@@ -156,6 +165,15 @@ namespace TrainerApp.Properties {
         public static string strChkCheatPromptInfiniteStasis {
             get {
                 return ResourceManager.GetString("strChkCheatPromptInfiniteStasis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unbreakable ship&apos;s hull:.
+        /// </summary>
+        public static string strChkCheatPromptUnbreakableShipsHull {
+            get {
+                return ResourceManager.GetString("strChkCheatPromptUnbreakableShipsHull", resourceCulture);
             }
         }
         

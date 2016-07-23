@@ -114,6 +114,9 @@ namespace TrainerApp
 			GameMemoryInjector.AddMemoryAlteration( ECheat.evCheatInfiniteCredits, new MemoryAlterationNOP( GameMemoryIO, mainModuleAddress + 0x1A0251, 3 ) );
 			GameMemoryInjector.AddMemoryAlteration( ECheat.evCheatInfiniteCredits, new MemoryAlterationX86Call( GameMemoryIO, mainModuleAddress + 0x17F887, ECodeCave.evCodeCaveInfiniteCredits1, 6 ) );
 			GameMemoryInjector.AddMemoryAlteration( ECheat.evCheatInfiniteCredits, new MemoryAlterationX86Call( GameMemoryIO, mainModuleAddress + 0x19E848, ECodeCave.evCodeCaveInfiniteCredits2, 6 ) );
+
+			GameMemoryInjector.AddMemoryAlteration( ECheat.evCheatUnbreakableShipsHull, new MemoryAlterationNOP( GameMemoryIO, mainModuleAddress + 0x1BD896, 8 ) );
+			GameMemoryInjector.AddMemoryAlteration( ECheat.evCheatUnbreakableShipsHull, new MemoryAlterationX86Call( GameMemoryIO, mainModuleAddress + 0x1BD84C, ECodeCave.evCodeCaveUnbreakableShipsHull, 8 ) );
 		}
 
 

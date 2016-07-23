@@ -25,8 +25,8 @@
 		xmlns:props="clr-namespace:TrainerApp.Properties"
         mc:Ignorable="d"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="{x:Static props:Resources.strMainWindowTitle}" Height="350" Width="630"
-		SizeToContent="Height"
+        Title="{x:Static props:Resources.strMainWindowTitle}" Height="450" Width="800"
+		SizeToContent="WidthAndHeight"
 		Icon="/media/icon.ico"
 		Closing="WindowClosing">
 	<Window.Resources>
@@ -120,6 +120,10 @@
 				<StackPanel Orientation="Horizontal">
 					<CheckBox Checked="CheckBoxCheatToggled" Unchecked="CheckBoxCheatToggled" Content="{x:Static props:Resources.strChkCheatPromptUnlimitedOxygen}" Tag="{x:Static local:ECheat.evCheatUnlimitedOxygen}" />
 					<Label Content="{x:Static props:Resources.strChkCheatDescriptionUnlimitedOxygen}" Margin="3" />
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox Checked="CheckBoxCheatToggled" Unchecked="CheckBoxCheatToggled" Content="{x:Static props:Resources.strChkCheatPromptUnbreakableShipsHull}" Tag="{x:Static local:ECheat.evCheatUnbreakableShipsHull}" />
+					<Label Content="{x:Static props:Resources.strChkCheatDescriptionUnbreakableShipsHull}" Margin="3" />
 				</StackPanel>
 			</StackPanel>
 		</GroupBox>
