@@ -4,4 +4,4 @@ RAMvader-DeadSpace is an opensource trainer for the game Dead Space. It has been
 RAMvader-DeadSpace uses the RAMvader library to have access to most low-level trainer functionality, such as performing reading and writing operations in the game's memory space. RAMvader-DeadSpace is actually a project created to showcase the power and ease of use of the RAMvader library.
 
 Please click the image below to see the project's video for a demonstration of the 'hacks' provided by the trainer:<br />
-[![RAMvader-DeadSpace demonstration](https://img.youtube.com/vi/fqxOr49UOus/0.jpg)](https://youtu.be/fqxOr49UOus "RAMvader-DeadSpace demonstration")
+[![RAMvader-DeadSpace demonstration](https://vinicius-ras.github.io/ramvader-deadspace/VideoScreenshot.jpg)](https://youtu.be/fqxOr49UOus "RAMvader-DeadSpace demonstration")
